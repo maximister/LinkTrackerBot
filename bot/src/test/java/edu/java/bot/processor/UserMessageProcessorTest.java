@@ -87,7 +87,6 @@ public class UserMessageProcessorTest {
     @DisplayName("test message processor with no text message")
     public void userMessageProcessor_shouldReturnNoTextMessage() {
         Mockito.when(message.text()).thenReturn(null);
-        UserMessageProcessor ump = new UserMessageProcessor(new CommandHandler(commands));
 
         SendMessage answer = ump.process(update);
 
@@ -98,7 +97,6 @@ public class UserMessageProcessorTest {
     @DisplayName("test message processor with no supportedCommand")
     public void userMessageProcessor_shouldReturnUnsupportedCommandMessage() {
         Mockito.when(message.text()).thenReturn("/tcl");
-        UserMessageProcessor ump = new UserMessageProcessor(new CommandHandler(commands));
 
         SendMessage answer = ump.process(update);
 
