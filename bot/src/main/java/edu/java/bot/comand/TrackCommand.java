@@ -12,9 +12,7 @@ public final class TrackCommand extends AbstractCommand {
     private final LinkService service;
 
     private final static String COMMAND_NAME = "track";
-    private final static String DESCRIPTION = """
-    Start tracking link. Example of using: /track <link>
-    """;
+    private final static String DESCRIPTION = "Start tracking link. Example of using: /track <link>";
     private static final String  INVALID_LINK_MESSAGE = "Your link is invalid. Please try again";
     private static final String  CORRECT_LINK_MESSAGE = "Started tracking your link";
 

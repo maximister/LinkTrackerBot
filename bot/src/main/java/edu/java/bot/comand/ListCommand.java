@@ -26,7 +26,7 @@ public final class ListCommand extends AbstractCommand {
         logMessage(update);
         List<Link> links = service.getLinks(update.message().from().id());
 
-        if (links == null) {
+        if (links.isEmpty()) {
             return new SendMessage(update.message().chat().id(), EMPTY_LIST_MESSAGE);
         } else {
             StringBuilder message = new StringBuilder(DEFAULT_MESSAGE);

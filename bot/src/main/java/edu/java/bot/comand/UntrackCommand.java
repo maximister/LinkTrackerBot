@@ -13,9 +13,7 @@ public final class UntrackCommand extends AbstractCommand {
     private final LinkService service;
 
     private final static String COMMAND_NAME = "untrack";
-    private final static String DESCRIPTION = """
-        Removes link from your track list. Example of using: /untrack <link>
-        """;
+    private final static String DESCRIPTION = "Removes link from your track list. Example of using: /untrack <link>";
     private static final String INVALID_UNTRACK_MESSAGE = "Your link is invalid. Please try again";
     private static final String NO_SUCH_LINK_MESSAGE = "There is no such link in your list. Please try again";
     private static final String CORRECT_UNTRACK_MESSAGE = "This link was successfully deleted";

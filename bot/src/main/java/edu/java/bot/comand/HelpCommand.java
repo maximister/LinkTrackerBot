@@ -2,11 +2,9 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
 public final class HelpCommand extends AbstractCommand {
     private String message;
     private final static String COMMAND_NAME = "help";
@@ -34,7 +32,6 @@ public final class HelpCommand extends AbstractCommand {
             .append(newCommand.description())
             .append('\n');
 
-        log.info("/help command was updated");
         message = sb.toString();
     }
 }
