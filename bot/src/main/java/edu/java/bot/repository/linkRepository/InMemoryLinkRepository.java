@@ -53,7 +53,7 @@ public class InMemoryLinkRepository implements LinkRepository {
     @Override
     public List<Link> getLinks(long userId) {
         List<Link> userLinks = links.get(userId);
-        return userLinks == null ? null : Collections.unmodifiableList(userLinks);
+        return userLinks == null ? Collections.emptyList() : Collections.unmodifiableList(userLinks);
     }
 
     @Override

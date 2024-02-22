@@ -35,7 +35,7 @@ public final class SimpleLinkService implements LinkService {
 
     @Override
     public Link getLinkByUrl(long userId, String url) {
-        return null;
+        return repository.getLinkByUrl(userId, url);
     }
 
 }
