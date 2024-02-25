@@ -24,6 +24,7 @@ public abstract class LinkProviderWebService implements LinkProviderService {
         return webClient.get()
             .uri(uri)
             .accept(MediaType.APPLICATION_JSON)
+            .accept()
             .retrieve()
             .bodyToMono(dtoClass)
             .retryWhen(Retry.fixedDelay(RETRY_MAX_ATTEMPTS, RETRY_DURATION))

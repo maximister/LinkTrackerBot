@@ -30,7 +30,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
         }
 
         GitHubResponse info = doRequest(url.getPath(), GitHubResponse.class, GitHubResponse.EMPTY_RESPONSE);
-        log.info("info {} from url {}", info, url.toString());
+        log.info("info {} from url {}", info, url);
 
         if (info == null || info.equals(GitHubResponse.EMPTY_RESPONSE)) {
             return null;
