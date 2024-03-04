@@ -1,4 +1,4 @@
-package edu.java.model.error;
+package edu.java.model;
 
 import java.util.List;
 

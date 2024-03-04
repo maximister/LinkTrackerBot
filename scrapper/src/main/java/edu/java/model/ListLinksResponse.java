@@ -1,6 +1,5 @@
-package edu.java.model.error;
+package edu.java.model;
 
-import edu.java.model.LinkResponse;
 import java.util.List;
 
 public record ListLinksResponse(

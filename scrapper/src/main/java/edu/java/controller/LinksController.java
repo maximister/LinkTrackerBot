@@ -2,12 +2,12 @@ package edu.java.controller;
 
 import edu.java.model.AddLinkRequest;
 import edu.java.model.LinkResponse;
+import edu.java.model.ListLinksResponse;
 import edu.java.model.RemoveLinkRequest;
-import edu.java.model.error.ListLinksResponse;
+import edu.java.service.LinkService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +25,12 @@ public class LinksController {
     //по идее тут везде могу вернуть только заглушки
     //дальше как я понял, с появлением бд нужно дабить слои в виде сервиса и репозитория, да?
 
+    private final LinkService linkService;
+
+    public LinksController(LinkService linkService) {
+        this.linkService = linkService;
+    }
+
     @GetMapping
     public ResponseEntity<ListLinksResponse> getLinks(
         @NotNull
@@ -32,7 +38,7 @@ public class LinksController {
         Long tgChatId
     ) {
         log.info("LinkController received GET request from user {}", tgChatId);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return linkService.getLinks();
     }
 
     @PostMapping
@@ -47,7 +53,7 @@ public class LinksController {
         log.info("LinkController received POST request from user {} with {} body",
             tgChatId, addLinkRequest
         );
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return linkService.addLink(tgChatId, addLinkRequest);
     }
 
     @DeleteMapping
@@ -62,6 +68,6 @@ public class LinksController {
         log.info("LinkController received DELETE request from user {} with {} body",
             tgChatId, removeLinkRequest
         );
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return linkService.deleteLink(tgChatId, removeLinkRequest);
     }
 }

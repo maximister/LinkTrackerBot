@@ -1,7 +1,7 @@
 package edu.java.controller;
 
+import edu.java.service.TgChatService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tg-chat")
 @Slf4j
 public class TgChatsController {
+    private final TgChatService tgChatService;
+
+    public TgChatsController(TgChatService tgChatService) {
+        this.tgChatService = tgChatService;
+    }
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> addChat(
@@ -20,7 +25,7 @@ public class TgChatsController {
         Long id
     ) {
         log.info("TgChatsController received POST request from user {}", id);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return tgChatService.addChat(id);
     }
 
     @DeleteMapping("/{id}")
@@ -29,6 +34,6 @@ public class TgChatsController {
         Long id
     ) {
         log.info("TgChatsController received DELETE request from user {}", id);
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        return tgChatService.addChat(id);
     }
 }
