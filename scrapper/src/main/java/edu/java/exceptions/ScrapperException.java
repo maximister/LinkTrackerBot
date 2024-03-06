@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class ScrapperException extends Exception {
+public class ScrapperException extends RuntimeException {
     protected final String description;
     protected final HttpStatus httpStatusCode;
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StubLinkService implements LinkService {
     @Override
-    public ResponseEntity<ListLinksResponse> getLinks() {
+    public ResponseEntity<ListLinksResponse> getLinks(Long id) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }

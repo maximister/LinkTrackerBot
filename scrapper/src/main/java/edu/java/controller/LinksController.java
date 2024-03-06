@@ -38,7 +38,7 @@ public class LinksController {
         Long tgChatId
     ) {
         log.info("LinkController received GET request from user {}", tgChatId);
-        return linkService.getLinks();
+        return linkService.getLinks(tgChatId);
     }
 
     @PostMapping

@@ -21,7 +21,7 @@ public class TgChatsController {
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> addChat(
-        @PathVariable
+        @PathVariable("id")
         Long id
     ) {
         log.info("TgChatsController received POST request from user {}", id);
@@ -34,6 +34,6 @@ public class TgChatsController {
         Long id
     ) {
         log.info("TgChatsController received DELETE request from user {}", id);
-        return tgChatService.addChat(id);
+        return tgChatService.deleteChat(id);
     }
 }
