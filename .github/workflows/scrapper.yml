@@ -6,11 +6,6 @@ on:
     paths:
       - .github/workflows/scrapper.yml
       - scrapper/**
-  pull_request:
-    paths:
-      - .github/workflows/scrapper.yml
-      - link-parser/**
-      - scrapper/**
 
 jobs:
   build:
