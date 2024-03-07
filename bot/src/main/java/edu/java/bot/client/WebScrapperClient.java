@@ -7,6 +7,7 @@ import edu.java.bot.model.scrapperClientDto.RemoveLinkRequest;
 import java.time.Duration;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -80,11 +81,12 @@ public final class WebScrapperClient implements ScrapperClient {
 
     @Override
     public LinkResponse deleteLink(Long chatId, RemoveLinkRequest removeLinkRequest) {
-        return webClient.post()
+        return webClient
+            .method(HttpMethod.DELETE)
             .uri(LINK_ENDPOINT)
             .header(TG_CHAT_HEADER, chatId.toString())
-            .bodyValue(removeLinkRequest)
             .accept(MediaType.APPLICATION_JSON)
+            .bodyValue(removeLinkRequest)
             .retrieve()
             .bodyToMono(LinkResponse.class)
             .retryWhen(Retry.fixedDelay(RETRY_MAX_ATTEMPTS, RETRY_DURATION))
@@ -107,7 +109,7 @@ public final class WebScrapperClient implements ScrapperClient {
 
     @Override
     public void deleteChat(Long id) {
-        webClient.post()
+        webClient.delete()
             .uri(CHAT_ENDPOINT, id)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
