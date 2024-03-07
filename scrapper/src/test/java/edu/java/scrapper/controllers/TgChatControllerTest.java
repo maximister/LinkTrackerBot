@@ -1,10 +1,10 @@
 package edu.java.scrapper.controllers;
 
-import edu.java.controller.TgChatsController;
-import edu.java.exceptions.ChatAlreadyRegisteredException;
-import edu.java.exceptions.ChatNotFoundException;
-import edu.java.exceptions.UnauthorizedChatException;
-import edu.java.service.TgChatService;
+import edu.java.scrapper.controller.TgChatsController;
+import edu.java.scrapper.exceptions.ChatAlreadyRegisteredException;
+import edu.java.scrapper.exceptions.ChatNotFoundException;
+import edu.java.scrapper.exceptions.UnauthorizedChatException;
+import edu.java.scrapper.service.TgChatService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

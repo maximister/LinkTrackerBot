@@ -1,14 +1,14 @@
 package edu.java.scrapper.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.java.controller.LinksController;
-import edu.java.exceptions.LinkAlreadyTrackedException;
-import edu.java.exceptions.UnsupportedLinkException;
-import edu.java.model.AddLinkRequest;
-import edu.java.model.LinkResponse;
-import edu.java.model.ListLinksResponse;
-import edu.java.model.RemoveLinkRequest;
-import edu.java.service.LinkService;
+import edu.java.scrapper.controller.LinksController;
+import edu.java.scrapper.exceptions.LinkAlreadyTrackedException;
+import edu.java.scrapper.exceptions.UnsupportedLinkException;
+import edu.java.scrapper.model.AddLinkRequest;
+import edu.java.scrapper.model.LinkResponse;
+import edu.java.scrapper.model.ListLinksResponse;
+import edu.java.scrapper.model.RemoveLinkRequest;
+import edu.java.scrapper.service.LinkService;
 import java.net.URI;
 import java.util.List;
 import lombok.SneakyThrows;

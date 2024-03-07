@@ -2,8 +2,8 @@ package edu.java.scrapper.clients;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.httpClients.botClient.WebBotClient;
-import edu.java.model.botClientDto.LinkUpdate;
+import edu.java.scrapper.httpClients.botClient.WebBotClient;
+import edu.java.scrapper.model.botClientDto.LinkUpdate;
 import java.net.URI;
 import java.util.Collections;
 import lombok.SneakyThrows;
