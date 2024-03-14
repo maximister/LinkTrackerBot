@@ -28,6 +28,7 @@ public class JdbcChatService implements TgChatService {
         }
     }
 
+    //TODO: добавить удвление всех связяй в таблице связей, сделать транзакцию
     @Override
     public ResponseEntity<Void> deleteChat(Long id) {
         try {

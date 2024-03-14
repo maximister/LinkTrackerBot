@@ -4,11 +4,13 @@ import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.scrapper.model.domainDto.Chat;
 import edu.java.scrapper.repository.jdbcRepository.JdbcChatRepository;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,7 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcChatRepository repository;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
+
+    @AfterEach
+    void cleanUp() {
+        jdbcTemplate.update("TRUNCATE TABLE chat_link, link, chat RESTART IDENTITY CASCADE");
+    }
+    
     @Test
     @DisplayName("Testing add chat method")
     @Transactional
