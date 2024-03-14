@@ -3,7 +3,7 @@ package edu.java.scrapper.httpClients.stackOverflow;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
-import java.net.URL;
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,7 +25,7 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    public LinkInfo fetch(URL url) {
+    public LinkInfo fetch(URI url) {
         if (!isValid(url)) {
             log.warn("URL {} is invalid", url);
             return null;
@@ -50,7 +50,7 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    protected boolean isValid(URL url) {
+    protected boolean isValid(URI url) {
         return STACKOVERFLOW_PATTERN.matcher(url.toString()).matches();
     }
 
@@ -58,7 +58,7 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
         private static final StackOverflowRequest EMPTY_RESPONSE =
             new StackOverflowRequest(null);
 
-        private LinkInfo toLinkInfo(URL url) {
+        private LinkInfo toLinkInfo(URI url) {
             StackOverflowItem item = items.get(0);
             String description = new StringBuilder()
                 .append("view count: ")

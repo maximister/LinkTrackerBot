@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class ScrapperException extends RuntimeException {
     protected final String description;
+    @Getter
     protected final HttpStatus httpStatusCode;
 
     public ScrapperException(String message, String description, HttpStatus httpStatusCode) {
@@ -13,4 +14,5 @@ public class ScrapperException extends RuntimeException {
         this.httpStatusCode = httpStatusCode;
         this.description = description;
     }
+
 }

@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderService;
 import edu.java.scrapper.httpClients.gitHub.GitHubWebClientService;
-import java.net.URL;
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.SneakyThrows;
@@ -51,7 +51,7 @@ public class GitHubWebClientServiceTest {
                 .withStatus(404)));
 
         CORRECT_DTO = new LinkInfo(
-            new URL("https://github.com/yrlvdplsh/TinkoffFakeAppForScam"),
+            new URI("https://github.com/yrlvdplsh/TinkoffFakeAppForScam"),
             111222333,
             "yrlvdplsh/TinkoffFakeAppForScam",
             "best scam app",
@@ -66,7 +66,7 @@ public class GitHubWebClientServiceTest {
     @Test
     @DisplayName("testing client work with correct link")
     public void fetch_shouldReturnCorrectDto() {
-        LinkInfo result = service.fetch(new URL(CORRECT_LINK));
+        LinkInfo result = service.fetch(new URI(CORRECT_LINK));
 
         System.out.println(result);
         assertThat(result).isEqualTo(CORRECT_DTO);
@@ -76,7 +76,7 @@ public class GitHubWebClientServiceTest {
     @Test
     @DisplayName("testing client work with non existing repo link")
     public void fetch_shouldReturnCorrectNull_whenRepoDoesNotExist() {
-        LinkInfo result = service.fetch(new URL(NON_EXISTING_REPO_LINK));
+        LinkInfo result = service.fetch(new URI(NON_EXISTING_REPO_LINK));
 
         assertThat(result).isNull();
     }
@@ -85,7 +85,7 @@ public class GitHubWebClientServiceTest {
     @Test
     @DisplayName("testing client work with not a github link")
     public void fetch_shouldReturnCorrectNull_whenLinkIsNotRepo() {
-        LinkInfo result = service.fetch(new URL(NOT_GITHUB_LINK));
+        LinkInfo result = service.fetch(new URI(NOT_GITHUB_LINK));
 
         assertThat(result).isNull();
     }

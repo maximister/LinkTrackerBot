@@ -1,6 +1,6 @@
 package edu.java.scrapper.httpClients;
 
-import java.net.URL;
+import java.net.URI;
 import java.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public abstract class LinkProviderWebService implements LinkProviderService {
         webClient = WebClient.create(baseUrl);
     }
 
-    protected abstract boolean isValid(URL url);
+    protected abstract boolean isValid(URI url);
 
     protected <T> T doRequest(String uri, Class<T> dtoClass, T onErrorValue) {
         return webClient.get()

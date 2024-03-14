@@ -24,7 +24,7 @@ public class TgChatControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean
+    @MockBean(name = "StubChatService")
     private TgChatService service;
 
     @SneakyThrows

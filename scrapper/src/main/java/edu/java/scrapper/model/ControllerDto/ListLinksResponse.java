@@ -1,4 +1,4 @@
-package edu.java.scrapper.model;
+package edu.java.scrapper.model.ControllerDto;
 
 import java.util.List;
 

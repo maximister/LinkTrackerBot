@@ -1,8 +1,9 @@
 CREATE TABLE link
 (
-    link_id     bigint                   NOT NULL GENERATED ALWAYS AS IDENTITY,
-    last_update timestamp with time zone NOT NULL,
-    url         text                     NOT NULL,
+    link_id     bigint NOT NULL GENERATED ALWAYS AS IDENTITY,
+    last_update timestamp with time zone,
+    last_check  timestamp with time zone,
+    url         text   NOT NULL,
     PRIMARY KEY (link_id)
 );
 

@@ -1,7 +1,7 @@
 package edu.java.scrapper.httpClients;
 
-import java.net.URL;
+import java.net.URI;
 
 public interface LinkProviderService {
-    LinkInfo fetch(URL url);
+    LinkInfo fetch(URI url);
 }
