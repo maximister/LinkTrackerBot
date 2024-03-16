@@ -13,4 +13,8 @@ public interface LinkRepository {
     Link deleteLink(long linkId);
 
     void updateLink(LinkInfo linkInfo);
+
+    Link findLinkById(long linkId);
+
+    Link findLinkByUrl(URI url);
 }

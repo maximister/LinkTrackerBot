@@ -39,6 +39,7 @@ public class JdbcChatRepository implements ChatRepository {
         return jdbcTemplate.query(query, mapper);
     }
 
+    @Override
     public Chat findChatById(long chatId) {
         String query = "SELECT * FROM chat WHERE chat_id = ?";
         return jdbcTemplate.query(query, mapper, chatId).stream().findAny().orElse(null);

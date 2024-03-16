@@ -154,6 +154,15 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         );
     }
 
+    @Test
+    @DisplayName("Testing find link by url  method")
+    public void findLinkByUrl_shouldWorkCorrectly() {
+        fillTableWithTestLinks();
+
+        Link result = repository.findLinkByUrl(firstUrl);
+        assertEquals(result.linkId(), 1L);
+    }
+
     @SneakyThrows
     private void fillTableWithTestLinks() {
         repository.addLink(firstUrl);

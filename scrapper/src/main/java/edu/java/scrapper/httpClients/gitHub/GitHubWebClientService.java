@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
 import java.net.URI;
-import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;

@@ -9,4 +9,6 @@ public interface ChatRepository {
     void deleteChat(long chatId);
 
     List<Chat> getAllChats();
+
+    Chat findChatById(long chatId);
 }

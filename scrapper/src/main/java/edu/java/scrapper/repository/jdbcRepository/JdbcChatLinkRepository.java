@@ -52,7 +52,6 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
         jdbcTemplate.update(query, chatId, linkId);
     }
 
-    //TODO: добавить метод удаления всех ссылок связаннных с чатом
     @Component
     public static class LinkIdRowMapper implements RowMapper<Integer> {
 

@@ -7,7 +7,7 @@ import edu.java.scrapper.model.ControllerDto.RemoveLinkRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface LinkService {
-    ResponseEntity<ListLinksResponse> getLinks(Long id);
+    ResponseEntity<ListLinksResponse> getLinks(Long tgChatId);
 
     ResponseEntity<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest);
 

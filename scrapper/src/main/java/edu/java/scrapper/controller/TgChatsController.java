@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TgChatsController {
     private final TgChatService tgChatService;
 
-    public TgChatsController(@Qualifier("StubChatService") TgChatService tgChatService) {
+    public TgChatsController(@Qualifier("JdbcChatService") TgChatService tgChatService) {
         this.tgChatService = tgChatService;
     }
 

@@ -49,7 +49,6 @@ public class JdbcLinkRepository implements LinkRepository {
 //            """;
 //        return jdbcTemplate.query(query, mapper, chatId);
 
-
         //выглядит колхозно, наверное, но я другого способа пока не придумал, буду рад советам
         StringBuilder placelolders = new StringBuilder(linksId.size());
         placelolders.repeat("?,", linksId.size());
@@ -81,9 +80,16 @@ public class JdbcLinkRepository implements LinkRepository {
         jdbcTemplate.update(query, linkInfo.lastModified(), OffsetDateTime.now(), linkInfo.id());
     }
 
+    @Override
     public Link findLinkById(long linkId) {
         String query = "SELECT * FROM link WHERE link_id = ?";
         return jdbcTemplate.query(query, mapper, linkId).stream().findAny().orElse(null);
+    }
+
+    @Override
+    public Link findLinkByUrl(URI url) {
+        String query = "SELECT * FROM link WHERE url = ?";
+        return jdbcTemplate.query(query, mapper, url).stream().findAny().orElse(null);
     }
 
     @Component
