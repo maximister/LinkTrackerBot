@@ -50,7 +50,7 @@ public class JdbcLinkService implements LinkService {
     public ResponseEntity<ListLinksResponse> getLinks(Long tgChatId) {
         checkChat(tgChatId);
 
-        List<Integer> linksIds = chatLinkRepository.getLinkIdsByChatId(tgChatId);
+        List<Long> linksIds = chatLinkRepository.getLinkIdsByChatId(tgChatId);
         List<Link> links = linkRepository.getLinks(linksIds);
 
         log.info("List of links for chat {} was formed", tgChatId);

@@ -35,7 +35,7 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
 
     @SneakyThrows
     @BeforeEach
-    private void fillTable() {
+    public void fillTable() {
         //fill chats
         chatRepository.addChat(1);
         chatRepository.addChat(2);
@@ -64,8 +64,8 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @DisplayName("testing get links by Chat id method")
     public void getLinkIdsByChatId_shouldWorkCorrectly() {
-        List<Integer> result = repository.getLinkIdsByChatId(1);
-        List<Integer> expected = List.of(1, 2, 3);
+        List<Long> result = repository.getLinkIdsByChatId(1);
+        List<Long> expected = List.of(1L, 2L, 3L);
 
         assertEquals(result, expected);
     }
@@ -73,8 +73,8 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
     @Test
     @DisplayName("testing get chats by link id method")
     public void getChatIdsByLinkId_shouldWorkCorrectly() {
-        List<Integer> result = repository.getChatIdsByLinkId(2);
-        List<Integer> expected = List.of(1, 2);
+        List<Long> result = repository.getChatIdsByLinkId(2);
+        List<Long> expected = List.of(1L, 2L);
 
         assertEquals(result, expected);
     }
@@ -101,11 +101,11 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
     public void deleteChatLinkConnection_shouldWorkCorrectly() {
         repository.deleteChatLinkConnection(1, 2);
 
-        List<Integer> resultLinkList = repository.getLinkIdsByChatId(1);
-        List<Integer> expectedLinkList = List.of(1, 3);
+        List<Long> resultLinkList = repository.getLinkIdsByChatId(1);
+        List<Long> expectedLinkList = List.of(1L, 3L);
 
-        List<Integer> resultChatList = repository.getChatIdsByLinkId(2);
-        List<Integer> expectedChatList = List.of(2);
+        List<Long> resultChatList = repository.getChatIdsByLinkId(2);
+        List<Long> expectedChatList = List.of(2L);
 
         assertAll(
             () -> assertEquals(resultChatList, expectedChatList),

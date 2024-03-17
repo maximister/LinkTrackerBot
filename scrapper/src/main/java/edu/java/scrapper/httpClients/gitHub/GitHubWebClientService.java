@@ -24,15 +24,11 @@ public class GitHubWebClientService extends LinkProviderWebService {
 
     @Override
     public LinkInfo fetch(URI url) {
-        if (!isValid(url)) {
-            log.warn("URL {} is invalid", url);
-            return null;
-        }
-
         GitHubResponse info = doRequest(url.getPath(), GitHubResponse.class, GitHubResponse.EMPTY_RESPONSE);
-        log.info("info {} from url {}", info, url);
+        log.info("got info {} from url {}", info, url);
 
         if (info == null || info.equals(GitHubResponse.EMPTY_RESPONSE)) {
+            log.warn("received empty result with link {}", url);
             return null;
         }
 
@@ -40,7 +36,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    protected boolean isValid(URI url) {
+    public boolean isValid(URI url) {
         return REPOSITORY_PATTERN.matcher(url.toString()).matches();
     }
 

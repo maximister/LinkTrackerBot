@@ -26,11 +26,6 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
 
     @Override
     public LinkInfo fetch(URI url) {
-        if (!isValid(url)) {
-            log.warn("URL {} is invalid", url);
-            return null;
-        }
-
         Matcher matcher = STACKOVERFLOW_PATTERN.matcher(url.toString());
         matcher.matches();
         String id = matcher.group(1);
@@ -43,6 +38,7 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
         log.info("info {} from url {}", info, url.toString());
 
         if (info == null || info.equals(StackOverflowRequest.EMPTY_RESPONSE)) {
+            log.warn("received empty result with link {}", url);
             return null;
         }
 
@@ -50,7 +46,7 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    protected boolean isValid(URI url) {
+    public boolean isValid(URI url) {
         return STACKOVERFLOW_PATTERN.matcher(url.toString()).matches();
     }
 

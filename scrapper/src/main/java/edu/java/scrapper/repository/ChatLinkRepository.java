@@ -3,9 +3,9 @@ package edu.java.scrapper.repository;
 import java.util.List;
 
 public interface ChatLinkRepository {
-    List<Integer> getLinkIdsByChatId(long chatId);
+    List<Long> getLinkIdsByChatId(long chatId);
 
-    List<Integer> getChatIdsByLinkId(long linkId);
+    List<Long> getChatIdsByLinkId(long linkId);
 
     boolean isLinkTracked(long linkId);
 

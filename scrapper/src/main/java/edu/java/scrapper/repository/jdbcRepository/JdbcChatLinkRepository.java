@@ -15,21 +15,24 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
     private final LinkIdRowMapper linkIdRowMapper;
     private final ChatIdRowMapper chatIdRowMapper;
 
-    public JdbcChatLinkRepository(JdbcTemplate jdbcTemplate, LinkIdRowMapper linkIdRowMapper, ChatIdRowMapper chatIdRowMapper) {
+    public JdbcChatLinkRepository(
+        JdbcTemplate jdbcTemplate,
+        LinkIdRowMapper linkIdRowMapper,
+        ChatIdRowMapper chatIdRowMapper
+    ) {
         this.jdbcTemplate = jdbcTemplate;
         this.linkIdRowMapper = linkIdRowMapper;
         this.chatIdRowMapper = chatIdRowMapper;
     }
 
-
     @Override
-    public List<Integer> getLinkIdsByChatId(long chatId) {
+    public List<Long> getLinkIdsByChatId(long chatId) {
         String query = "SELECT link_id FROM chat_link WHERE chat_id = ?";
         return jdbcTemplate.query(query, linkIdRowMapper, chatId);
     }
 
     @Override
-    public List<Integer> getChatIdsByLinkId(long linkId) {
+    public List<Long> getChatIdsByLinkId(long linkId) {
         String query = "SELECT chat_id FROM chat_link WHERE link_id = ?";
         return jdbcTemplate.query(query, chatIdRowMapper, linkId);
     }
@@ -53,20 +56,20 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
     }
 
     @Component
-    public static class LinkIdRowMapper implements RowMapper<Integer> {
+    public static class LinkIdRowMapper implements RowMapper<Long> {
 
         @Override
-        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getInt("link_id");
+        public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return rs.getLong("link_id");
         }
     }
 
     @Component
-    public static class ChatIdRowMapper implements RowMapper<Integer> {
+    public static class ChatIdRowMapper implements RowMapper<Long> {
 
         @Override
-        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getInt("chat_id");
+        public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return rs.getLong("chat_id");
         }
     }
 }

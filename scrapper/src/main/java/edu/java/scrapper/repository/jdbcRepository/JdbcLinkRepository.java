@@ -6,6 +6,7 @@ import edu.java.scrapper.repository.LinkRepository;
 import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -38,7 +39,7 @@ public class JdbcLinkRepository implements LinkRepository {
 
     //TODO: переделать с учетом chat_link repo
     @Override
-    public List<Link> getLinks(List<Integer> linksId) {
+    public List<Link> getLinks(List<Long> linksId) {
 //        String query = """
 //            SELECT * FROM link
 //            WHERE link_id IN
@@ -90,6 +91,13 @@ public class JdbcLinkRepository implements LinkRepository {
     public Link findLinkByUrl(URI url) {
         String query = "SELECT * FROM link WHERE url = ?";
         return jdbcTemplate.query(query, mapper, url).stream().findAny().orElse(null);
+    }
+
+    @Override
+    public List<Link> findLinksByUpdateTime(Duration offset) {
+        OffsetDateTime minimalTime = OffsetDateTime.now().minus(offset);
+        String query = "SELECT * FROM link WHERE last_check < ?";
+        return jdbcTemplate.query(query, mapper, minimalTime);
     }
 
     @Component
