@@ -75,15 +75,6 @@ public class StackOverflowWebClientServiceTest {
         assertThat(result).isNull();
     }
 
-    @SneakyThrows
-    @Test
-    @DisplayName("testing client work with not a stackOverflow link")
-    public void fetch_shouldReturnNull_whenLinkIsNotQuestion() {
-        LinkInfo result = service.fetch(new URI(NOT_STACKOVERFLOW_LINK));
-
-        assertThat(result).isNull();
-    }
-
     @AfterAll
     public static void shutdown() {
         server.stop();

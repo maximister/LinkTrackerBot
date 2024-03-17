@@ -90,7 +90,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public Link findLinkByUrl(URI url) {
         String query = "SELECT * FROM link WHERE url = ?";
-        return jdbcTemplate.query(query, mapper, url).stream().findAny().orElse(null);
+        return jdbcTemplate.query(query, mapper, url.toString()).stream().findAny().orElse(null);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class JdbcLinkRepository implements LinkRepository {
         @Override
         public Link mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Link(
-                rs.getInt(ID),
+                rs.getLong(ID),
                 rs.getObject(UPDATE, OffsetDateTime.class),
                 rs.getObject(CHECK, OffsetDateTime.class),
                 new URI(rs.getObject(URL, String.class))

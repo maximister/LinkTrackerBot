@@ -5,7 +5,9 @@ import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.model.domainDto.Link;
 import edu.java.scrapper.repository.jdbcRepository.JdbcLinkRepository;
 import java.net.URI;
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -90,7 +92,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         );
 
         //looking at table
-        assertThat(repository.getLinks(List.of(1))).isEqualTo(List.of(result));
+        assertThat(repository.getLinks(List.of(1L))).isEqualTo(List.of(result));
     }
 
     @SneakyThrows
@@ -98,7 +100,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @DisplayName("Testing get links method")
     public void getLinks_shouldWorkCorrectly() {
         fillTableWithTestLinks();
-        List<Integer> requiredLinkIds = List.of(1, 2, 3);
+        List<Long> requiredLinkIds = List.of(1L, 2L, 3L);
 
         List<Link> result = repository.getLinks(requiredLinkIds);
 
@@ -155,13 +157,29 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     }
 
     @Test
-    @DisplayName("Testing find link by url  method")
+    @DisplayName("Testing find link by url method")
     public void findLinkByUrl_shouldWorkCorrectly() {
         fillTableWithTestLinks();
 
         Link result = repository.findLinkByUrl(firstUrl);
         assertEquals(result.linkId(), 1L);
     }
+
+    @Test
+    @DisplayName("Testing find links by update time method")
+    public void findLinksByUpdateTime_shouldWorkCorrectly() {
+        fillTableWithTestLinks();
+
+        List<Link> linksForUpdate = repository.findLinksByUpdateTime(Duration.ZERO);
+        List<Link> expected = List.of(
+            repository.findLinkByUrl(firstUrl),
+            repository.findLinkByUrl(secondUrl),
+            repository.findLinkByUrl(thirdUrl)
+        );
+        assertEquals(linksForUpdate, expected);
+        assertEquals(repository.findLinksByUpdateTime(Duration.ofDays(1)), Collections.emptyList());
+    }
+
 
     @SneakyThrows
     private void fillTableWithTestLinks() {

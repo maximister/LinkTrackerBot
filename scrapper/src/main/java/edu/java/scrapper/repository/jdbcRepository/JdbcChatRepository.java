@@ -49,7 +49,7 @@ public class JdbcChatRepository implements ChatRepository {
     public static class ChatRowMapper implements RowMapper<Chat> {
         @Override
         public Chat mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Chat(rs.getInt(ID));
+            return new Chat(rs.getLong(ID));
         }
     }
 }

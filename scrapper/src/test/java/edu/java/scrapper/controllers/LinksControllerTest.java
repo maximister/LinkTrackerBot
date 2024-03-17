@@ -28,10 +28,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(LinksController.class) public class LinksControllerTest {
+@WebMvcTest(LinksController.class)
+public class LinksControllerTest {
     @Autowired
     private MockMvc mvc;
-    @MockBean
+    @MockBean(name = "JdbcLinkService")
     private LinkService service;
     @Autowired
     private ObjectMapper mapper;
@@ -119,7 +120,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     public void deleteLink_shouldReturnBadRequest_whenNoBody() {
         Mockito.when(service.deleteLink(1L, removeLinkRequest))
             .thenReturn(new ResponseEntity<>(new LinkResponse(linkId, URL), HttpStatus.BAD_REQUEST));
-        mvc.perform(delete("/links").header("Tg-Chat-Id", 1L).contentType("application/json"))
+        mvc.perform(
+            delete("/links")
+                .header("Tg-Chat-Id", 1L)
+                .contentType("application/json"))
             .andExpect(status().isBadRequest());
     }
 
