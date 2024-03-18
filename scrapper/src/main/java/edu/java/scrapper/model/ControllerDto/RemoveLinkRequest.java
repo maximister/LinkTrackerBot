@@ -1,10 +1,10 @@
 package edu.java.scrapper.model.ControllerDto;
 
-import jakarta.validation.constraints.NotNull;
+import edu.java.scrapper.validation.ScrapperUrl;
 import java.net.URI;
 
 public record RemoveLinkRequest(
-    @NotNull
+    @ScrapperUrl
     URI link
 ) {
 }

@@ -46,7 +46,7 @@ public class JdbcLinkService implements LinkService {
         this.mapper = mapper;
     }
 
-    @SuppressWarnings("checkstyle:NeedBraces") @Override
+    @Override
     @Transactional
     public ResponseEntity<ListLinksResponse> getLinks(Long tgChatId) {
         checkChat(tgChatId);
@@ -73,6 +73,8 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     public ResponseEntity<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
         checkChat(tgChatId);
+
+        //TODO: проверить, что ссылка на реальный репо путем фетча через клиент
 
         Link resultLink = linkRepository.findLinkByUrl(addLinkRequest.url());
         if (resultLink == null) {

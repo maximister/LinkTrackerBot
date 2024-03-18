@@ -1,7 +1,7 @@
 package edu.java.bot.controller;
 
 import edu.java.bot.exceptions.BotException;
-import edu.java.bot.model.controllerDto.ApiErrorResponse;
+import edu.java.bot.model.scrapperClientDto.ApiErrorResponse;
 import java.util.Arrays;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;

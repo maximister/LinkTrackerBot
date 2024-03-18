@@ -143,7 +143,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     public void updateLink_shouldWorkCorrectly() {
         fillTableWithTestLinks();
         OffsetDateTime newTime = time.plusHours(1);
-        repository.updateLink(new LinkInfo(firstUrl, 1, "", "", newTime));
+        repository.updateLink(new LinkInfo(firstUrl, "", "", newTime));
 
         Link expected = new Link(1, newTime, newTime, firstUrl);
         Link result = repository.findLinkById(1);

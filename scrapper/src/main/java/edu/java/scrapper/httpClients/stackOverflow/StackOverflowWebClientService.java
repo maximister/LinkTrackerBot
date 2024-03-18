@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,7 +34,8 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
             doRequest(
                 "/questions/" + id + "?site=stackoverflow",
                 StackOverflowRequest.class,
-                StackOverflowRequest.EMPTY_RESPONSE
+                StackOverflowRequest.EMPTY_RESPONSE,
+                HttpHeaders.EMPTY
             );
         log.info("info {} from url {}", info, url.toString());
 
@@ -66,7 +68,6 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
 
             return new LinkInfo(
                 url,
-                item.id,
                 item.title,
                 description,
                 item.lastModified

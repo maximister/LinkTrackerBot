@@ -37,7 +37,7 @@ public class LinksControllerTest {
     @Autowired
     private ObjectMapper mapper;
     private final long linkId = 1111;
-    private static final URI URL = URI.create("yrlvdplsh.com");
+    private static final URI URL = URI.create("https://github.com/yrlvdplsh/aboba");
     private static RemoveLinkRequest removeLinkRequest;
     private static AddLinkRequest addLinkRequest;
 

@@ -3,6 +3,7 @@ package edu.java.scrapper.httpClients;
 import java.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.util.retry.Retry;
@@ -17,10 +18,11 @@ public abstract class LinkProviderWebService implements LinkProviderService {
         webClient = WebClient.create(baseUrl);
     }
 
-    protected <T> T doRequest(String uri, Class<T> dtoClass, T onErrorValue) {
+    protected <T> T doRequest(String uri, Class<T> dtoClass, T onErrorValue, HttpHeaders headers) {
         return webClient.get()
             .uri(uri)
             .accept(MediaType.APPLICATION_JSON)
+            .headers(h -> h.putAll(headers))
             .accept()
             .retrieve()
             .bodyToMono(dtoClass)

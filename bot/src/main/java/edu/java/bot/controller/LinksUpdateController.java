@@ -1,8 +1,8 @@
 package edu.java.bot.controller;
 
 import edu.java.bot.model.controllerDto.LinkUpdate;
+import edu.java.bot.model.scrapperClientDto.ApiErrorResponse;
 import edu.java.bot.service.linksUpdateService.LinksUpdateService;
-import edu.java.scrapper.model.ControllerDto.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

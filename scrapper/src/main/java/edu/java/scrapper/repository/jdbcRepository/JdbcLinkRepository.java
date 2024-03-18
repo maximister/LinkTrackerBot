@@ -77,8 +77,8 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public void updateLink(LinkInfo linkInfo) {
-        String query = "UPDATE link SET last_update = ?, last_check = ? WHERE link_id = ?";
-        jdbcTemplate.update(query, linkInfo.lastModified(), OffsetDateTime.now(), linkInfo.id());
+        String query = "UPDATE link SET last_update = ?, last_check = ? WHERE url = ?";
+        jdbcTemplate.update(query, linkInfo.lastModified(), OffsetDateTime.now(), linkInfo.url().toString());
     }
 
     @Override

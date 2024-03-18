@@ -52,7 +52,6 @@ public class GitHubWebClientServiceTest {
 
         CORRECT_DTO = new LinkInfo(
             new URI("https://github.com/yrlvdplsh/TinkoffFakeAppForScam"),
-            111222333,
             "yrlvdplsh/TinkoffFakeAppForScam",
             "best scam app",
             OffsetDateTime.parse("2023-10-02T19:07:33Z", DateTimeFormatter.ISO_DATE_TIME)

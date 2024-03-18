@@ -3,6 +3,9 @@ app:
     enable: true
     interval: 5s
     force-check-delay: 5s
+  allowedUrlPatterns:
+    - https://github.com/(?<owner>.+)/(?<repo>.+)
+    - https://stackoverflow.com/questions/(\d+).*
 
 spring:
   application:
