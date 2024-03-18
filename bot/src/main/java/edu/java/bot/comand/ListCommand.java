@@ -2,21 +2,21 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.model.Link;
-import edu.java.bot.service.linkService.LinkService;
-import java.util.List;
+import edu.java.bot.model.scrapperClientDto.LinkResponse;
+import edu.java.bot.model.scrapperClientDto.ListLinksResponse;
+import edu.java.bot.service.commandService.CommandService;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class ListCommand extends AbstractCommand {
-    private final LinkService service;
+    private final CommandService service;
 
     private final static String COMMAND_NAME = "list";
     private final static String DESCRIPTION = "Prints all tracked links";
     private final static String DEFAULT_MESSAGE = "Your links:\n";
     private final static String EMPTY_LIST_MESSAGE = "There are no any tracked links";
 
-    public ListCommand(LinkService service) {
+    public ListCommand(CommandService service) {
         super(COMMAND_NAME, DESCRIPTION);
         this.service = service;
     }
@@ -24,14 +24,14 @@ public final class ListCommand extends AbstractCommand {
     @Override
     public SendMessage handle(Update update) {
         logMessage(update);
-        List<Link> links = service.getLinks(update.message().from().id());
+        ListLinksResponse links = service.getLinks(update.message().from().id());
 
-        if (links.isEmpty()) {
+        if (links.size() == 0) {
             return new SendMessage(update.message().chat().id(), EMPTY_LIST_MESSAGE);
         } else {
             StringBuilder message = new StringBuilder(DEFAULT_MESSAGE);
 
-            for (Link link: links) {
+            for (LinkResponse link: links.links()) {
                 message.append("— ")
                     .append(link.url())
                     .append('\n');

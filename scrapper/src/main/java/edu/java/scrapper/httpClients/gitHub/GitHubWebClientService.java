@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public class GitHubWebClientService extends LinkProviderWebService {
     private static final String BASE_URL = "https://api.github.com/repos/";
     private static final String EVENTS_ENDPOINT = "/events?per_page=10";
 
+    @Value("${client.github.token}")
+    private String token;
+
     public GitHubWebClientService(String baseUrl) {
         super(baseUrl);
     }
@@ -27,7 +31,6 @@ public class GitHubWebClientService extends LinkProviderWebService {
         super(BASE_URL);
     }
 
-    //TODO: добавить токен
     @Override
     public LinkInfo fetch(URI url) {
         LinkInfo eventsInfo = fetchEvents(url);
@@ -54,12 +57,14 @@ public class GitHubWebClientService extends LinkProviderWebService {
     }
 
     private LinkInfo fetchEvents(URI url) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+
         GitHubEventDto[] eventsInfo = doRequest(
             url.getPath() + EVENTS_ENDPOINT,
             GitHubEventDto[].class,
             new GitHubEventDto[0],
-            HttpHeaders.EMPTY
-            //HttpHeaders.formatHeaders(new HttpHeaders().set("Authorization", "Bearer " + token))
+            headers
         );
 
         if (eventsInfo == null || eventsInfo.length == 0) {

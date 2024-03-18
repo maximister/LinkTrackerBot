@@ -1,8 +1,8 @@
 app:
   scheduler:
     enable: true
-    interval: 5s
-    force-check-delay: 5s
+    interval: 30s
+    force-check-delay: 30s
   allowedUrlPatterns:
     - https://github.com/(?<owner>.+)/(?<repo>.+)
     - https://stackoverflow.com/questions/(\d+).*
@@ -27,3 +27,12 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+client:
+  github:
+    token: ${GITHUB_TOKEN:}
+  stackoverflow:
+    access-token: ${STACKOVERFLOW_ACCESS_TOKEN:}
+    key: ${STACKOVERFLOW_KEY:}
+
+

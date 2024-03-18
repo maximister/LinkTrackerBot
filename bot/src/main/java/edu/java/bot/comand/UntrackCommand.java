@@ -2,15 +2,17 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.model.Link;
 import edu.java.bot.model.ParsedCommand;
-import edu.java.bot.service.linkService.LinkService;
+import edu.java.bot.model.scrapperClientDto.LinkResponse;
+import edu.java.bot.model.scrapperClientDto.RemoveLinkRequest;
+import edu.java.bot.service.commandService.CommandService;
 import edu.java.bot.utils.CommandUtils;
+import java.net.URI;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class UntrackCommand extends AbstractCommand {
-    private final LinkService service;
+    private final CommandService service;
 
     private final static String COMMAND_NAME = "untrack";
     private final static String DESCRIPTION = "Removes link from your track list. Example of using: /untrack <link>";
@@ -18,7 +20,7 @@ public final class UntrackCommand extends AbstractCommand {
     private static final String NO_SUCH_LINK_MESSAGE = "There is no such link in your list. Please try again";
     private static final String CORRECT_UNTRACK_MESSAGE = "This link was successfully deleted";
 
-    public UntrackCommand(LinkService service) {
+    public UntrackCommand(CommandService service) {
         super(COMMAND_NAME, DESCRIPTION);
         this.service = service;
     }
@@ -34,13 +36,15 @@ public final class UntrackCommand extends AbstractCommand {
             return new SendMessage(update.message().chat().id(), INVALID_UNTRACK_MESSAGE);
         }
 
-        Link link =
-            service.getLinkByUrl(update.message().from().id(), parsedCommand.arguments().getFirst());
-        if (link == null) {
+        LinkResponse response = service.removeLink(
+            update.message().from().id(),
+            new RemoveLinkRequest(URI.create(parsedCommand.arguments().getFirst()))
+        );
+
+        if (response.url() == null) {
             return new SendMessage(update.message().chat().id(), NO_SUCH_LINK_MESSAGE);
         }
 
-        service.untrackLink(update.message().from().id(), link.linkId());
         return new SendMessage(update.message().chat().id(), CORRECT_UNTRACK_MESSAGE);
     }
 }

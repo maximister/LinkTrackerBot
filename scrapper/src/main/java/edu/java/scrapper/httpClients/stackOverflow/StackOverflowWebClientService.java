@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,10 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
     private static final Pattern STACKOVERFLOW_PATTERN =
         Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
     private static final String BASE_URL = "https://api.stackexchange.com/2.3";
+    @Value("${client.stackoverflow.access-token}")
+    private String accessToken;
+    @Value("${client.stackoverflow.key}")
+    private String key;
 
     public StackOverflowWebClientService(String baseUrl) {
         super(baseUrl);
@@ -32,7 +37,8 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
         String id = matcher.group(1);
         StackOverflowRequest info =
             doRequest(
-                "/questions/" + id + "?site=stackoverflow",
+                "/questions/" + id + "?site=stackoverflow&access_token="
+                    + accessToken + "&key=" + key,
                 StackOverflowRequest.class,
                 StackOverflowRequest.EMPTY_RESPONSE,
                 HttpHeaders.EMPTY

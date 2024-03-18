@@ -98,7 +98,7 @@ public final class WebScrapperClient implements ScrapperClient {
     @Override
     public void addChat(Long id) {
         webClient.post()
-            .uri(CHAT_ENDPOINT, id)
+            .uri(CHAT_ENDPOINT + "/" + id)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .bodyToMono(void.class)

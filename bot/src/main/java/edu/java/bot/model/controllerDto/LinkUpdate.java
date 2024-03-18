@@ -12,7 +12,7 @@ public record LinkUpdate(
     Long id,
     @NotNull
     URI url,
-    @NotBlank //пока не знаю, где нужно это описание, мб валидация и не нужна
+    @NotBlank
     String description,
     @NotEmpty
     List<Long> tgChatIds) {
