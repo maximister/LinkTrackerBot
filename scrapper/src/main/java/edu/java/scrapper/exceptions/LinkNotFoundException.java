@@ -7,8 +7,8 @@ public final class LinkNotFoundException extends ScrapperException {
 
     public LinkNotFoundException(URI url) {
         super(
-            "Ссылка %s не найдена".formatted(url.toString()),
-            "Получена неотслеживаемая ссылка",
+            "Link %s is not found".formatted(url.toString()),
+            "Received untracked link",
             HttpStatus.NOT_FOUND
         );
     }

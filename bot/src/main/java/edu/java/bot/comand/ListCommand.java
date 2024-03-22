@@ -2,6 +2,7 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.exceptions.BotException;
 import edu.java.bot.model.scrapperClientDto.LinkResponse;
 import edu.java.bot.model.scrapperClientDto.ListLinksResponse;
 import edu.java.bot.service.commandService.CommandService;
@@ -24,20 +25,25 @@ public final class ListCommand extends AbstractCommand {
     @Override
     public SendMessage handle(Update update) {
         logMessage(update);
-        ListLinksResponse links = service.getLinks(update.message().from().id());
+        long chatId = update.message().chat().id();
+        try {
+            ListLinksResponse links = service.getLinks(update.message().from().id());
 
-        if (links.size() == 0) {
-            return new SendMessage(update.message().chat().id(), EMPTY_LIST_MESSAGE);
-        } else {
-            StringBuilder message = new StringBuilder(DEFAULT_MESSAGE);
+            if (links.size() == 0) {
+                return new SendMessage(chatId, EMPTY_LIST_MESSAGE);
+            } else {
+                StringBuilder message = new StringBuilder(DEFAULT_MESSAGE);
 
-            for (LinkResponse link: links.links()) {
-                message.append("— ")
-                    .append(link.url())
-                    .append('\n');
+                for (LinkResponse link : links.links()) {
+                    message.append("— ")
+                        .append(link.url())
+                        .append('\n');
+                }
+
+                return new SendMessage(chatId, message.toString());
             }
-
-            return new SendMessage(update.message().chat().id(), message.toString());
+        } catch (BotException e) {
+            return handleBotException(chatId, e);
         }
     }
 }

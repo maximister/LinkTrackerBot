@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class GitHubWebClientService extends LinkProviderWebService {
     private static final Pattern REPOSITORY_PATTERN =
         Pattern.compile("https://github.com/(?<owner>.+)/(?<repo>.+)");
@@ -64,7 +66,8 @@ public class GitHubWebClientService extends LinkProviderWebService {
             url.getPath() + EVENTS_ENDPOINT,
             GitHubEventDto[].class,
             new GitHubEventDto[0],
-            headers
+            HttpHeaders.EMPTY
+            //headers
         );
 
         if (eventsInfo == null || eventsInfo.length == 0) {
@@ -116,6 +119,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
                     }
                 }
             }
+            log.debug(message.toString());
 
             return new LinkInfo(
                 url,
@@ -123,6 +127,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
                 message.toString(),
                 lastUpdate
             );
+
         }
     }
 }

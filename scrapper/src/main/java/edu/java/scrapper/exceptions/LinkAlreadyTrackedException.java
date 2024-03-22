@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 public final class LinkAlreadyTrackedException extends ScrapperException {
     public LinkAlreadyTrackedException(URI url) {
         super(
-            "Ссылка %s уже отслеживается".formatted(url.toString()),
-            "Невозможно повторно добавить ссылку",
+            "Link %s is already tracked".formatted(url.toString()),
+            "Impossible to track link again",
             HttpStatus.CONFLICT
         );
     }

@@ -22,14 +22,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class ScrapperHandleExceptionsService extends ResponseEntityExceptionHandler {
 
-    //Старался проектировать ошибки так, чтобы вся обработка потом влезла в один метод
-    //или лучше на каждую свой метод?
     @ExceptionHandler(ScrapperException.class)
     public ResponseEntity<ApiErrorResponse> handleScrapperExceptions(ScrapperException ex) {
         return new ResponseEntity<>(
             new ApiErrorResponse(
                 ex.getDescription(),
-                ex.getHttpStatusCode().toString(),
+                Integer.toString(ex.getHttpStatusCode().value()),
                 ex.getClass().getSimpleName(),
                 ex.getMessage(),
                 Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
@@ -38,8 +36,21 @@ public class ScrapperHandleExceptionsService extends ResponseEntityExceptionHand
         );
     }
 
-    //перегрузил часть методов из ResponseEntityExceptionHandler (выбирал методы скорее по названию пока),
-    //чтобы привести спринговые ошибки к читаемому апишному виду
+    @SuppressWarnings("checkstyle:MagicNumber")
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleServerExceptions(Exception ex) {
+        return new ResponseEntity<>(
+            new ApiErrorResponse(
+                "Sorry, unexpected server error",
+                "500",
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+            ),
+            HttpStatusCode.valueOf(500)
+        );
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(
         HttpRequestMethodNotSupportedException ex,
@@ -123,7 +134,7 @@ public class ScrapperHandleExceptionsService extends ResponseEntityExceptionHand
     private ResponseEntity<Object> toApiErrorResponse(Exception ex, HttpStatusCode status) {
         return new ResponseEntity<>(
             new ApiErrorResponse(
-                "Некорректные параметры запроса",
+                "Invalid request parameters",
                 String.valueOf(status.value()),
                 ex.getClass().getSimpleName(),
                 ex.getMessage(),

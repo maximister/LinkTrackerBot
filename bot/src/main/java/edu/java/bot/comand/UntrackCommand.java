@@ -2,6 +2,7 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.exceptions.BotException;
 import edu.java.bot.model.ParsedCommand;
 import edu.java.bot.model.scrapperClientDto.LinkResponse;
 import edu.java.bot.model.scrapperClientDto.RemoveLinkRequest;
@@ -28,6 +29,7 @@ public final class UntrackCommand extends AbstractCommand {
     @Override
     public SendMessage handle(Update update) {
         logMessage(update);
+        long chatId = update.message().from().id();
         String userMessage = update.message().text();
 
         ParsedCommand parsedCommand = CommandUtils.parseCommand(userMessage);
@@ -36,15 +38,19 @@ public final class UntrackCommand extends AbstractCommand {
             return new SendMessage(update.message().chat().id(), INVALID_UNTRACK_MESSAGE);
         }
 
-        LinkResponse response = service.removeLink(
-            update.message().from().id(),
-            new RemoveLinkRequest(URI.create(parsedCommand.arguments().getFirst()))
-        );
-
-        if (response.url() == null) {
-            return new SendMessage(update.message().chat().id(), NO_SUCH_LINK_MESSAGE);
+        try {
+            LinkResponse response = service.removeLink(
+                chatId,
+                new RemoveLinkRequest(URI.create(parsedCommand.arguments().getFirst()))
+            );
+            if (response.url() == null) {
+                return new SendMessage(chatId, NO_SUCH_LINK_MESSAGE);
+            }
+        } catch (BotException e) {
+            return handleBotException(chatId, e);
         }
 
-        return new SendMessage(update.message().chat().id(), CORRECT_UNTRACK_MESSAGE);
+
+        return new SendMessage(chatId, CORRECT_UNTRACK_MESSAGE);
     }
 }

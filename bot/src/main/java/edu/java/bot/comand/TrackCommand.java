@@ -2,6 +2,7 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.exceptions.BotException;
 import edu.java.bot.model.ParsedCommand;
 import edu.java.bot.model.scrapperClientDto.AddLinkRequest;
 import edu.java.bot.service.commandService.CommandService;
@@ -35,10 +36,15 @@ public final class TrackCommand extends AbstractCommand {
             return new SendMessage(chatId, INVALID_LINK_MESSAGE);
         }
 
-        service.addLink(
-            update.message().from().id(),
-            new AddLinkRequest(URI.create(parsedCommand.arguments().getFirst()))
-        );
+        try {
+            service.addLink(
+                chatId,
+                new AddLinkRequest(URI.create(parsedCommand.arguments().getFirst()))
+            );
+        } catch (BotException e) {
+            return handleBotException(chatId, e);
+        }
+
         return new SendMessage(chatId, CORRECT_LINK_MESSAGE);
     }
 }

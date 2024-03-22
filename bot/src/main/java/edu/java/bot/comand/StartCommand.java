@@ -2,6 +2,7 @@ package edu.java.bot.comand;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.exceptions.BotException;
 import edu.java.bot.service.commandService.CommandService;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,12 @@ public final class StartCommand extends AbstractCommand {
     @Override
     public SendMessage handle(Update update) {
         logMessage(update);
-        service.registerChat(update.message().from().id());
-        return new SendMessage(update.message().chat().id(), DEFAULT_MESSAGE);
+        long chatId = update.message().chat().id();
+        try {
+            service.registerChat(update.message().from().id());
+        } catch (BotException e) {
+            return handleBotException(chatId, e);
+        }
+        return new SendMessage(chatId, DEFAULT_MESSAGE);
     }
 }

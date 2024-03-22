@@ -2,6 +2,7 @@ package edu.java.bot.controller;
 
 import edu.java.bot.exceptions.BotException;
 import edu.java.bot.model.scrapperClientDto.ApiErrorResponse;
+import edu.java.scrapper.exceptions.ScrapperException;
 import java.util.Arrays;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -15,7 +16,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class BotHandleExceptionService extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(BotException.class)
+
+    @ExceptionHandler(ScrapperException.class)
     public ResponseEntity<ApiErrorResponse> handleScrapperExceptions(BotException ex) {
         return new ResponseEntity<>(
             new ApiErrorResponse(

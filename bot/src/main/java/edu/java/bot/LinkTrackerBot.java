@@ -56,12 +56,18 @@ public class LinkTrackerBot implements UpdatesListener, AutoCloseable, Exception
 
     @Override
     public int process(List<Update> updates) {
-        for (Update update : updates) {
-            SendMessage answer = processor.process(update);
-            sender.sendMessage(answer);
+        try {
+            for (Update update : updates) {
+                SendMessage answer = processor.process(update);
+                sender.sendMessage(answer);
+            }
+
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        } catch (Exception e) {
+            log.error("Error in bot {}", e.toString());
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
         }
 
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
     @Override

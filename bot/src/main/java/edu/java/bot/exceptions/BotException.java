@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class BotException extends Exception {
+public class BotException extends RuntimeException {
     protected final String description;
     protected final HttpStatus httpStatusCode;
 
