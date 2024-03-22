@@ -1,14 +1,11 @@
 package edu.java.bot.controller;
 
-import edu.java.bot.exceptions.BotException;
 import edu.java.bot.model.scrapperClientDto.ApiErrorResponse;
-import edu.java.scrapper.exceptions.ScrapperException;
 import java.util.Arrays;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -16,20 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class BotHandleExceptionService extends ResponseEntityExceptionHandler {
-
-    @ExceptionHandler(ScrapperException.class)
-    public ResponseEntity<ApiErrorResponse> handleScrapperExceptions(BotException ex) {
-        return new ResponseEntity<>(
-            new ApiErrorResponse(
-                ex.getDescription(),
-                ex.getHttpStatusCode().toString(),
-                ex.getClass().getSimpleName(),
-                ex.getMessage(),
-                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
-            ),
-            ex.getHttpStatusCode()
-        );
-    }
 
     @Override
     protected ResponseEntity<Object> handleHandlerMethodValidationException(
