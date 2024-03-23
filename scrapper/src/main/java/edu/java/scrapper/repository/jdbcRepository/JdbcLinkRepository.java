@@ -37,20 +37,8 @@ public class JdbcLinkRepository implements LinkRepository {
         this.mapper = mapper;
     }
 
-    //TODO: переделать с учетом chat_link repo
     @Override
     public List<Link> getLinks(List<Long> linksId) {
-//        String query = """
-//            SELECT * FROM link
-//            WHERE link_id IN
-//            (
-//            SELECT link_id FROM chat_link
-//            WHERE chat_id = ?
-//            );
-//            """;
-//        return jdbcTemplate.query(query, mapper, chatId);
-
-        //выглядит колхозно, наверное, но я другого способа пока не придумал, буду рад советам
         StringBuilder placelolders = new StringBuilder(linksId.size());
         placelolders.repeat("?,", linksId.size());
         placelolders.deleteCharAt(linksId.size() * 2 - 1);
@@ -61,7 +49,6 @@ public class JdbcLinkRepository implements LinkRepository {
         return jdbcTemplate.query(finalQuery, mapper, linksId.toArray());
     }
 
-    //TODO: роверка чата ложится на сервис полцучается
     @Override
     public Link addLink(URI url) {
         String query = "INSERT INTO link (url, last_update, last_check) VALUES(?, ?, ?) RETURNING *";
