@@ -7,7 +7,6 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import static edu.java.scrapper.repository.jooq.tables.Chat.CHAT;
 
-
 @Repository("JooqChatRepository")
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext context;
@@ -37,10 +36,11 @@ public class JooqChatRepository implements ChatRepository {
     }
 
     @Override
-    public edu.java.scrapper.model.domainDto.Chat findChatById(long chatId) {
-        return context.selectFrom(CHAT)
+    public Chat findChatById(long chatId) {
+        List<Chat> chats = context.selectFrom(CHAT)
             .where(CHAT.CHAT_ID.eq(chatId))
-            .fetchInto(edu.java.scrapper.model.domainDto.Chat.class)
-            .getFirst();
+            .fetchInto(Chat.class);
+
+        return chats.isEmpty() ? null : chats.getFirst();
     }
 }

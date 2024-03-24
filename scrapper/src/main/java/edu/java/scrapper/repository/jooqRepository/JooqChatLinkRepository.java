@@ -30,10 +30,7 @@ public class JooqChatLinkRepository implements ChatLinkRepository {
 
     @Override
     public boolean isLinkTracked(long linkId) {
-        return !context.selectFrom(CHAT_LINK)
-            .where(CHAT_LINK.LINK_ID.eq(linkId))
-            .fetch()
-            .isEmpty();
+        return context.fetchCount(CHAT_LINK, CHAT_LINK.LINK_ID.eq(linkId)) > 0;
     }
 
     @Override

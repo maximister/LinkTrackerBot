@@ -28,11 +28,8 @@ public class JooqLinkRepository implements LinkRepository {
 
     @Override
     public Link addLink(URI url) {
-        return context.insertInto(
-                edu.java.scrapper.repository.jooq.tables.Link.LINK,
-                edu.java.scrapper.repository.jooq.tables.Link.LINK.URL
-            )
-            .values(url.toString())
+        return context.insertInto(LINK, LINK.URL, LINK.LAST_CHECK, LINK.LAST_UPDATE)
+            .values(url.toString(), OffsetDateTime.now(), OffsetDateTime.now())
             .returning()
             .fetchInto(Link.class)
             .getFirst();
