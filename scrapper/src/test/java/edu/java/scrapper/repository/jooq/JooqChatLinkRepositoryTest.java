@@ -1,5 +1,6 @@
 package edu.java.scrapper.repository.jooq;
 
+import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.scrapper.repository.ChatRepository;
 import edu.java.scrapper.repository.LinkRepository;
 import edu.java.scrapper.repository.jdbcRepository.JdbcChatLinkRepository;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class JooqChatLinkRepositoryTest {
+public class JooqChatLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcChatLinkRepository repository;
     @Autowired

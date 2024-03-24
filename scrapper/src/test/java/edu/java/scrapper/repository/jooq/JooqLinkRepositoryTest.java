@@ -1,5 +1,6 @@
 package edu.java.scrapper.repository.jooq;
 
+import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.model.domainDto.Link;
 import edu.java.scrapper.repository.jooqRepository.JooqLinkRepository;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class JooqLinkRepositoryTest {
+public class JooqLinkRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JooqLinkRepository repository;
     @Autowired

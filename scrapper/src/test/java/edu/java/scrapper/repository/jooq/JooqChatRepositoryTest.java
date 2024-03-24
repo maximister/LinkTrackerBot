@@ -1,5 +1,6 @@
 package edu.java.scrapper.repository.jooq;
 
+import edu.java.scrapper.IntegrationEnvironment;
 import edu.java.scrapper.model.domainDto.Chat;
 import edu.java.scrapper.repository.jooqRepository.JooqChatRepository;
 import java.util.List;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class JooqChatRepositoryTest {
+public class JooqChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JooqChatRepository repository;
     @Autowired
