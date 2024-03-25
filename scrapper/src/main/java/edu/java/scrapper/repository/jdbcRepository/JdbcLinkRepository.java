@@ -13,7 +13,7 @@ import lombok.SneakyThrows;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 /**
  * тут взоникли некоторые беды с запросами, поэтому я решил разделить зоны ответственности
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Repository;
  * Но в связи с этим есть некоторые вопросики в плане дизайна, по которым нужно будет посоветоваться
  * они будут в сервисе ссылок навеное)
  */
-@Repository("JdbcLinkRepository")
+@Service
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
     private final LinkRowMapper mapper;

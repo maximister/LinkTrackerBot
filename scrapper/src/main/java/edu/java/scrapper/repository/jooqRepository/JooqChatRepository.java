@@ -4,10 +4,10 @@ import edu.java.scrapper.model.domainDto.Chat;
 import edu.java.scrapper.repository.ChatRepository;
 import java.util.List;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import static edu.java.scrapper.repository.jooq.tables.Chat.CHAT;
 
-@Repository("JooqChatRepository")
+@Service
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext context;
 

@@ -46,8 +46,6 @@ public class LinksControllerTest {
         addLinkRequest = new AddLinkRequest(URL);
     }
 
-    //Стоит ли писать столько тестов для контроллера или это перебор?
-
     @SneakyThrows
     @Test
     @DisplayName("correct get request")

@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LinksController {
     private final LinkService linkService;
 
-    public LinksController(@Qualifier("JdbcLinkService") LinkService linkService) {
+    public LinksController(LinkService linkService) {
         this.linkService = linkService;
     }
 
