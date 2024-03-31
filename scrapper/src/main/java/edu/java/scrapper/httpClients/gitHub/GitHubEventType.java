@@ -1,7 +1,7 @@
 package edu.java.scrapper.httpClients.gitHub;
 
-import lombok.Getter;
 import java.net.URI;
+import lombok.Getter;
 
 @SuppressWarnings("checkstyle:MultipleStringLiterals")
 @Getter
