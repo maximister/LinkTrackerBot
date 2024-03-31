@@ -1,6 +1,7 @@
 package edu.java.bot.sender;
 
 import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,6 @@ public class BotMessageSender {
     }
 
     public void sendMessage(SendMessage message) {
-        bot.execute(message);
+        bot.execute(message.parseMode(ParseMode.Markdown));
     }
 }

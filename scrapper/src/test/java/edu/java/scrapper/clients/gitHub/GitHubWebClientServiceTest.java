@@ -8,6 +8,9 @@ import edu.java.scrapper.httpClients.gitHub.GitHubWebClientService;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,28 +68,28 @@ public class GitHubWebClientServiceTest {
     @Test
     @DisplayName("testing client work with correct link")
     public void fetch_shouldReturnCorrectDto() {
-        LinkInfo result = service.fetch(new URI(CORRECT_LINK));
+        List<LinkInfo> result = service.fetch(new URI(CORRECT_LINK));
 
         System.out.println(result);
-        assertThat(result).isEqualTo(CORRECT_DTO);
+        assertThat(result).isEqualTo(List.of(CORRECT_DTO));
     }
 
     @SneakyThrows
     @Test
     @DisplayName("testing client work with non existing repo link")
     public void fetch_shouldReturnCorrectNull_whenRepoDoesNotExist() {
-        LinkInfo result = service.fetch(new URI(NON_EXISTING_REPO_LINK));
+        List<LinkInfo> result = service.fetch(new URI(NON_EXISTING_REPO_LINK));
 
-        assertThat(result).isNull();
+        assertThat(result).isEqualTo(Collections.emptyList());
     }
 
     @SneakyThrows
     @Test
     @DisplayName("testing client work with not a github link")
     public void fetch_shouldReturnCorrectNull_whenLinkIsNotRepo() {
-        LinkInfo result = service.fetch(new URI(NOT_GITHUB_LINK));
+        List<LinkInfo> result = service.fetch(new URI(NOT_GITHUB_LINK));
 
-        assertThat(result).isNull();
+        assertThat(result).isEqualTo(Collections.emptyList());
     }
 
     @AfterAll

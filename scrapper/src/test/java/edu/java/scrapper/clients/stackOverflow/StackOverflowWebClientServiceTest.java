@@ -8,6 +8,9 @@ import edu.java.scrapper.httpClients.stackOverflow.StackOverflowWebClientService
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,6 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 
 public class StackOverflowWebClientServiceTest {
     private static final String CORRECT_SERVER_ENDPOINT = "/questions/53579112*";
@@ -60,18 +64,18 @@ public class StackOverflowWebClientServiceTest {
     @Test
     @DisplayName("testing client work with correct link")
     public void fetch_shouldReturnCorrectDto() {
-        LinkInfo result = service.fetch(new URI(CORRECT_LINK));
+        List<LinkInfo> result = service.fetch(new URI(CORRECT_LINK));
 
-        assertThat(result).isEqualTo(CORRECT_DTO);
+        assertThat(result).isEqualTo(List.of(CORRECT_DTO));
     }
 
     @SneakyThrows
     @Test
     @DisplayName("testing client work with non existing question")
     public void fetch_shouldReturnNull_whenQuestionDoesNotExist() {
-        LinkInfo result = service.fetch(new URI(NOT_EXISTING_QUESTION));
+        List<LinkInfo> result = service.fetch(new URI(NOT_EXISTING_QUESTION));
 
-        assertThat(result).isNull();
+        assertThat(result).isEqualTo(Collections.emptyList());
     }
 
     @AfterAll

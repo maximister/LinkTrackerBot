@@ -34,7 +34,7 @@ public class LinkUpdaterScheduler {
     public LinkUpdaterScheduler(
         BotClient botClient,
         List<LinkProviderService> providers, LinkService linkService, TgChatService chatService
-        ) {
+    ) {
         this.botClient = botClient;
         this.providers = providers;
         this.linkService = linkService;
@@ -59,14 +59,16 @@ public class LinkUpdaterScheduler {
                     return new UnsupportedLinkException(link.url());
                 });
 
-            LinkInfo update = client.fetch(link.url());
-            if (update == null) {
+            List<LinkInfo> updates = client.fetch(link.url());
+            if (updates.isEmpty()) {
                 log.warn("Scheduler has gotten empty answer");
             } else {
-                if (update.lastModified().isAfter(link.lastUpdate())) {
-                    LinkUpdate botUpdate = linkService.updateLink(update);
-                    botClient.sendMessage(botUpdate);
-                    log.info("Scheduler has updated link {}", link.url());
+                for (LinkInfo update : updates) {
+                    if (update.lastModified().isAfter(link.lastUpdate())) {
+                        LinkUpdate botUpdate = linkService.updateLink(update);
+                        botClient.sendMessage(botUpdate);
+                        log.info("Scheduler has updated link {}", link.url());
+                    }
                 }
             }
         }
