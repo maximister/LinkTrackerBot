@@ -36,4 +36,26 @@ client:
     access-token: ${STACKOVERFLOW_ACCESS_TOKEN:}
     key: ${STACKOVERFLOW_KEY:}
 
-
+retry-config:
+  retries:
+    - client: bot
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: github
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: stackoverflow
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
