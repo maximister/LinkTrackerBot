@@ -1,6 +1,6 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: 15s
     force-check-delay: 15s
   database-access-type: jdbc
@@ -16,6 +16,14 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
+  jooq:
+    sql-dialect: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
   liquibase:
     enabled: false
 

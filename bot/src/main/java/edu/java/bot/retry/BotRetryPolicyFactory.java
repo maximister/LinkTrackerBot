@@ -1,21 +1,22 @@
-package edu.java.scrapper.retry;
+package edu.java.bot.retry;
 
-import edu.java.scrapper.configuration.RetryConfig;
+import edu.java.bot.configuration.RetryConfig;
+import edu.java.bot.exceptions.ServerException;
+import edu.java.scrapper.retry.LinearRetry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.experimental.UtilityClass;
-import org.springframework.retry.ExhaustedRetryException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
 @UtilityClass
-public class RetryPolicyFactory {
+public class BotRetryPolicyFactory {
     private final static Map<String, Function<RetryConfig.RetryInfo, Retry>> RETRIES = new HashMap<>();
 
     static {
@@ -23,7 +24,13 @@ public class RetryPolicyFactory {
             "fixed",
             retry -> RetryBackoffSpec.fixedDelay(retry.maxAttempts(), retry.delay())
                 .filter(getErrorList(retry.codes()))
-                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new RuntimeException())
+                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ServerException(
+                    "", //Система ретраев и реакций на ошибки в боте, которую я делал в прошлых дз,
+                    "", //в ходе ретраев в случае неудачи кидала ошибку на стороне сервера, поэтому
+                        // ее и тут теперь кидаю. Поля пустые, тк инфа из них нигде никак не используется,
+                        //поэтому не вижу смысла пока думать о том, как ее извлечь в новых реалиях
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                ))
         );
         RETRIES.put(
             "linear",
@@ -32,7 +39,7 @@ public class RetryPolicyFactory {
                 retry.maxAttempts(),
                 retry.step(),
                 getErrorList(retry.codes()),
-                new ExhaustedRetryException("Retry exhausted")
+                new ServerException("", "", HttpStatus.INTERNAL_SERVER_ERROR)
             )
         );
         RETRIES.put(
@@ -42,7 +49,11 @@ public class RetryPolicyFactory {
                     retry.delay()
                 ).jitter(0.0)
                 .filter(getErrorList(retry.codes()))
-                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new RuntimeException())
+                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ServerException(
+                    "",
+                    "",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                ))
         );
     }
 
@@ -68,10 +79,8 @@ public class RetryPolicyFactory {
 
     private Predicate<Throwable> getErrorList(Set<Integer> codes) {
         return t -> {
-            if (t instanceof WebClientResponseException e) {
-                return codes.contains(e.getStatusCode().value());
-            }
-            return true;
+            return t instanceof ServerException e;
         };
     }
 }
+

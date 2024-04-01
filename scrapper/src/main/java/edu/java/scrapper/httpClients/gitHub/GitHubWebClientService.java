@@ -1,6 +1,7 @@
 package edu.java.scrapper.httpClients.gitHub;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.java.scrapper.configuration.RetryConfig;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
 import java.net.URI;
@@ -13,12 +14,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
 @Slf4j
+@Component
 public class GitHubWebClientService extends LinkProviderWebService {
     private static final Pattern REPOSITORY_PATTERN =
         Pattern.compile("https://github.com/(?<owner>.+)/(?<repo>.+)");
@@ -28,12 +30,18 @@ public class GitHubWebClientService extends LinkProviderWebService {
     @Value("${client.github.token}")
     private String token;
 
-    public GitHubWebClientService(String baseUrl) {
-        super(baseUrl);
+    public GitHubWebClientService(String baseUrl, RetryConfig retryConfig) {
+        super(baseUrl, retryConfig);
     }
 
-    public GitHubWebClientService() {
-        super(BASE_URL);
+    @Override
+    protected String getName() {
+        return "github";
+    }
+
+    @Autowired
+    public GitHubWebClientService(RetryConfig retryConfig) {
+        super(BASE_URL, retryConfig);
     }
 
     @Override

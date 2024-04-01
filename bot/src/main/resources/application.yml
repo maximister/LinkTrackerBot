@@ -18,3 +18,12 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
 
+retry-config:
+  retries:
+    - client: scrapper
+      type: fixed
+      max-attempts: 1
+      step: 2
+      delay: 2s
+      codes:
+        - 500
