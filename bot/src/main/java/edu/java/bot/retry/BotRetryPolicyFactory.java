@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
@@ -18,6 +19,7 @@ import reactor.util.retry.RetryBackoffSpec;
 @UtilityClass
 public class BotRetryPolicyFactory {
     private final static Map<String, Function<RetryConfig.RetryInfo, Retry>> RETRIES = new HashMap<>();
+    private static final String ERROR_MESSAGE = "Sorry, unexpected error :(";
 
     static {
         RETRIES.put(
@@ -25,10 +27,8 @@ public class BotRetryPolicyFactory {
             retry -> RetryBackoffSpec.fixedDelay(retry.maxAttempts(), retry.delay())
                 .filter(getErrorList(retry.codes()))
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ServerException(
-                    "", //Система ретраев и реакций на ошибки в боте, которую я делал в прошлых дз,
-                    "", //в ходе ретраев в случае неудачи кидала ошибку на стороне сервера, поэтому
-                        // ее и тут теперь кидаю. Поля пустые, тк инфа из них нигде никак не используется,
-                        //поэтому не вижу смысла пока думать о том, как ее извлечь в новых реалиях
+                    ERROR_MESSAGE,
+                    "",
                     HttpStatus.INTERNAL_SERVER_ERROR
                 ))
         );
@@ -39,7 +39,7 @@ public class BotRetryPolicyFactory {
                 retry.maxAttempts(),
                 retry.step(),
                 getErrorList(retry.codes()),
-                new ServerException("", "", HttpStatus.INTERNAL_SERVER_ERROR)
+                new ServerException(ERROR_MESSAGE, "", HttpStatus.INTERNAL_SERVER_ERROR)
             )
         );
         RETRIES.put(
@@ -50,7 +50,7 @@ public class BotRetryPolicyFactory {
                 ).jitter(0.0)
                 .filter(getErrorList(retry.codes()))
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> new ServerException(
-                    "",
+                    ERROR_MESSAGE,
                     "",
                     HttpStatus.INTERNAL_SERVER_ERROR
                 ))
@@ -79,7 +79,10 @@ public class BotRetryPolicyFactory {
 
     private Predicate<Throwable> getErrorList(Set<Integer> codes) {
         return t -> {
-            return t instanceof ServerException e;
+            if (t instanceof WebClientResponseException e) {
+                return codes.contains(e.getStatusCode().value());
+            }
+            return true;
         };
     }
 }

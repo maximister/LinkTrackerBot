@@ -21,8 +21,8 @@ springdoc:
 retry-config:
   retries:
     - client: scrapper
-      type: fixed
-      max-attempts: 1
+      type: exponential
+      max-attempts: 3
       step: 2
       delay: 2s
       codes:

@@ -29,7 +29,6 @@ public final class WebScrapperClient implements ScrapperClient {
     private static final String LINK_ENDPOINT = "/links";
     private static final String TG_CHAT_HEADER = "Tg-Chat-Id";
 
-
     public WebScrapperClient(String baseUrl, RetryConfig retryConfig) {
         this.webClient = WebClient.builder()
             .baseUrl(baseUrl)

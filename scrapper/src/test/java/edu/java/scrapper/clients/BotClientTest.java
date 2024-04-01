@@ -43,16 +43,11 @@ public class BotClientTest {
 
         server.start();
         RetryConfig configuration = new RetryConfig(
-            List.of(new RetryConfig.RetryInfo("scrapper", "fixed", 1, 1,
+            List.of(new RetryConfig.RetryInfo("bot", "fixed", 1, 1,
                 Duration.ofSeconds(1), Set.of(500)
             )));
         client = new WebBotClient(server.baseUrl(), configuration);
     }
-
-    //честно не особо пон как тестить с учетом того, что никакой логики в контроллерах пока нет
-    //работает и работает
-    //Или стоит прописать конкретные жсонки с корректными и некорректными данными
-    //и прописать на каждую жсонку свой код wireMock'a?
 
     @Test
     @DisplayName("Testing bot client post request")
