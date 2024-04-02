@@ -24,6 +24,13 @@ spring:
       ddl-auto: validate
     open-in-view: false
     show-sql: false
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - rate-limit-bucket
+    caffeine:
+      spec: maximumSize=1000000,expireAfterAccess=3600s
   liquibase:
     enabled: false
 
@@ -67,3 +74,31 @@ retry-config:
       delay: 2s
       codes:
         - 500
+
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      http-response-headers:
+        Content-Type: "application/json; charset=utf-8"
+      http-response-body: |
+        {
+          "description": "Превышено количество запросов с текущего IP",
+          "code": 429,
+          "exceptionName": "Rate limit exceeded",
+          "exceptionMessage": "Вы <b>превысили</b> количество доступных запросов, попробуйте чуть позже. <b>Имейте совесть</b>, не нагружайте сервер по полной"
+        }
+      rate-limits:
+        - bandwidths:
+            - capacity: 1
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()
+          skip-condition: '@limitService.isSkipped(getRemoteAddr())'
+
+rate-limiter:
+  whitelist: 127.0.0.1
