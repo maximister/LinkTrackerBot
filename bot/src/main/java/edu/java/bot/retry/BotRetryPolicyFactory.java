@@ -2,7 +2,6 @@ package edu.java.bot.retry;
 
 import edu.java.bot.configuration.RetryConfig;
 import edu.java.bot.exceptions.ServerException;
-import edu.java.scrapper.retry.LinearRetry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
