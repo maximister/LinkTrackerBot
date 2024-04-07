@@ -5,6 +5,8 @@ import edu.java.scrapper.model.domainDto.Chat;
 import edu.java.scrapper.repository.jooqRepository.JooqChatRepository;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,14 @@ public class JooqChatRepositoryTest extends IntegrationEnvironment {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-
     @AfterEach
+    @BeforeEach
     void cleanUp() {
         jdbcTemplate.update("TRUNCATE TABLE chat_link, link, chat RESTART IDENTITY CASCADE");
     }
 
     @Test
     @DisplayName("Testing add chat method")
-    @Transactional
-    @Rollback
     public void addChat_shouldWorkCorrectly() {
         repository.addChat(1);
 
@@ -41,8 +41,6 @@ public class JooqChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @DisplayName("delete chat test")
-    @Transactional
-    @Rollback
     public void deleteChat_shouldWorkCorrectly() {
         repository.addChat(1);
         repository.deleteChat(1);
@@ -52,8 +50,6 @@ public class JooqChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @DisplayName("get all chats test")
-    @Transactional
-    @Rollback
     public void getAllChats_shouldWorkCorrectly() {
         repository.addChat(1);
         repository.addChat(2);
