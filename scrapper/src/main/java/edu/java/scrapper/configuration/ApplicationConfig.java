@@ -12,7 +12,7 @@ public record ApplicationConfig(
     @NotNull
     Scheduler scheduler,
     AccessType databaseAccessType,
-
+    boolean useQueue,
     @NotNull
     List<String> allowedUrlPatterns
 ) {

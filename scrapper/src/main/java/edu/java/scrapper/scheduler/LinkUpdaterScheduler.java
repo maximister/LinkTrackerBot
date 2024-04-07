@@ -3,11 +3,10 @@ package edu.java.scrapper.scheduler;
 import edu.java.scrapper.exceptions.UnsupportedLinkException;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderService;
-import edu.java.scrapper.httpClients.botClient.BotClient;
 import edu.java.scrapper.model.botClientDto.LinkUpdate;
 import edu.java.scrapper.model.domainDto.Link;
 import edu.java.scrapper.service.LinkService;
-import edu.java.scrapper.service.TgChatService;
+import edu.java.scrapper.service.botSender.BotUpdateSender;
 import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -27,15 +26,16 @@ public class LinkUpdaterScheduler {
     private Duration forceCheckDelay;
     @Value("#{@'app-edu.java.scrapper.configuration.ApplicationConfig'.scheduler.enable}")
     private boolean isEnable;
-    private final BotClient botClient;
+    private final BotUpdateSender botUpdateSender;
     private final List<LinkProviderService> providers;
     private final LinkService linkService;
 
     public LinkUpdaterScheduler(
-        BotClient botClient,
-        List<LinkProviderService> providers, LinkService linkService, TgChatService chatService
+        List<LinkProviderService> providers,
+        LinkService linkService,
+        BotUpdateSender botUpdateSender
     ) {
-        this.botClient = botClient;
+        this.botUpdateSender = botUpdateSender;
         this.providers = providers;
         this.linkService = linkService;
     }
@@ -66,7 +66,7 @@ public class LinkUpdaterScheduler {
                 for (LinkInfo update : updates) {
                     if (update.lastModified().isAfter(link.lastUpdate())) {
                         LinkUpdate botUpdate = linkService.updateLink(update);
-                        botClient.sendMessage(botUpdate);
+                        botUpdateSender.sendUpdate(botUpdate);
                         log.info("Scheduler has updated link {}", link.url());
                     }
                 }

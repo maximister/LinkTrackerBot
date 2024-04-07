@@ -4,6 +4,7 @@ app:
     interval: 15s
     force-check-delay: 15s
   database-access-type: jdbc
+  use-queue: true
   allowedUrlPatterns:
     - https://github.com/(?<owner>.+)/(?<repo>.+)
     - https://stackoverflow.com/questions/(\d+).*
@@ -43,6 +44,22 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+kafka:
+  bootstrapServers: localhost:29092
+  clientId: scrapper
+  acksMode: all
+  deliveryTimeout: 60s
+  lingerMs: 12_000
+  batchSize: 100_000
+  maxInFlightPerConnection: 5
+  enableIdempotence: true
+  topic:
+    name: scrapper-bot-mq
+    partitions: 2
+    replicas: 1
+
+
 
 client:
   github:
