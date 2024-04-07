@@ -15,6 +15,4 @@ public class KafkaProducerProperties {
     private Duration deliveryTimeout;
     private Integer lingerMs;
     private Integer batchSize;
-    private Integer maxInFlightPerConnection;
-    private boolean enableIdempotence;
 }
