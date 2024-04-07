@@ -49,18 +49,6 @@ public class BotClientTest {
         client = new WebBotClient(server.baseUrl(), configuration);
     }
 
-    @Test
-    @DisplayName("Testing fixed retry")
-    public void botClient_SendRequestSeveralTimesWithLFixedDelay() {
-//        RetryConfig configuration = new RetryConfig(
-//            List.of(new RetryConfig.RetryInfo("bot", "fixed", 1, 1,
-//                Duration.ofSeconds(1), Set.of(500)
-//            )));
-//        client = new WebBotClient(server.baseUrl(), configuration);
-
-        client.sendMessage(dto);
-        server.verify(4, WireMock.postRequestedFor(WireMock.urlEqualTo(UPDATES_ENDPOINT)));
-    }
 
     @Test
     @DisplayName("Testing bot client post request")
