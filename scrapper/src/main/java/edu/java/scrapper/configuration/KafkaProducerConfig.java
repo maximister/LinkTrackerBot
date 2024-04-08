@@ -24,7 +24,10 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerProperties.getBootstrapServers());
         props.put(ProducerConfig.ACKS_CONFIG, kafkaProducerProperties.getAcksMode());
         props.put(ProducerConfig.CLIENT_ID_CONFIG, kafkaProducerProperties.getClientId());
-        props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, kafkaProducerProperties.getDeliveryTimeout());
+        props.put(
+            ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG,
+            (int) kafkaProducerProperties.getDeliveryTimeout().toMillis()
+        );
         props.put(ProducerConfig.LINGER_MS_CONFIG, kafkaProducerProperties.getLingerMs());
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, kafkaProducerProperties.getBatchSize());
         props.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);

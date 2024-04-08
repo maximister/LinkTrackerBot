@@ -11,23 +11,23 @@ spring:
       - rate-limit-buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
-  kafka:
-    consumer:
-      bootstrap-servers: localhost:9092
-      group-id: bot
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-        spring.json.value.default.type: edu.java.bot.model.controllerDto.LinkUpdate;
-    producer:
-      bootstrap-servers: localhost:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: false
+
+
+kafka:
+  consumer:
     bootstrap-servers: localhost:9092
+    group-id: bot
+    auto-offset-reset: earliest
+    max-poll-interval-ms: 300_000
+    enable-auto-commit: false
+    concurrency: 1
+  producer:
+    bootstrap-servers: localhost:9092
+    client-id: bot
+    acks-mode: 0
+    delivery-timeout: 60s
+    linger-ms: 1_000
+    batch-size: 100_000
 
 kafka-topic:
   name: scrapper-bot-mq
