@@ -35,6 +35,20 @@ spring:
   liquibase:
     enabled: false
 
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  server:
+    port: 8081
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: metrics
+
 server:
   port: 8080
 
