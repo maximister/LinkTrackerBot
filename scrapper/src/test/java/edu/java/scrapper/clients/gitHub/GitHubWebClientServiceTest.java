@@ -2,9 +2,9 @@ package edu.java.scrapper.clients.gitHub;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import edu.java.httpClients.LinkInfo;
-import edu.java.httpClients.LinkProviderService;
-import edu.java.httpClients.gitHub.GitHubWebClientService;
+import edu.java.scrapper.httpClients.LinkInfo;
+import edu.java.scrapper.httpClients.LinkProviderService;
+import edu.java.scrapper.httpClients.gitHub.GitHubWebClientService;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
