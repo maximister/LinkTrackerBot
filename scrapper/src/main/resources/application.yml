@@ -48,6 +48,18 @@ management:
         include: health, info, prometheus
       path-mapping:
         prometheus: metrics
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 server:
   port: 8080
