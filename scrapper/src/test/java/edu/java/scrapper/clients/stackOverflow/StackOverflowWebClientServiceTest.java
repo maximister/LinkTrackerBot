@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderService;
 import edu.java.scrapper.httpClients.stackOverflow.StackOverflowWebClientService;
-import java.net.URL;
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.SneakyThrows;
@@ -45,7 +45,7 @@ public class StackOverflowWebClientServiceTest {
                 .withStatus(404)));
 
         CORRECT_DTO = new LinkInfo(
-            new URL("https://stackoverflow.com/questions/53579112/inject-list-of-all-beans-with-a-certain-interface"),
+            new URI("https://stackoverflow.com/questions/53579112/inject-list-of-all-beans-with-a-certain-interface"),
             53579112,
             "Inject list of all beans with a certain interface",
             "view count: 25154\nanswer count: 1",
@@ -61,7 +61,7 @@ public class StackOverflowWebClientServiceTest {
     @Test
     @DisplayName("testing client work with correct link")
     public void fetch_shouldReturnCorrectDto() {
-        LinkInfo result = service.fetch(new URL(CORRECT_LINK));
+        LinkInfo result = service.fetch(new URI(CORRECT_LINK));
 
         assertThat(result).isEqualTo(CORRECT_DTO);
     }
@@ -70,16 +70,7 @@ public class StackOverflowWebClientServiceTest {
     @Test
     @DisplayName("testing client work with non existing question")
     public void fetch_shouldReturnNull_whenQuestionDoesNotExist() {
-        LinkInfo result = service.fetch(new URL(NOT_EXISTING_QUESTION));
-
-        assertThat(result).isNull();
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("testing client work with not a stackOverflow link")
-    public void fetch_shouldReturnNull_whenLinkIsNotQuestion() {
-        LinkInfo result = service.fetch(new URL(NOT_STACKOVERFLOW_LINK));
+        LinkInfo result = service.fetch(new URI(NOT_EXISTING_QUESTION));
 
         assertThat(result).isNull();
     }

@@ -3,7 +3,7 @@ package edu.java.scrapper.httpClients.gitHub;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
-import java.net.URL;
+import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
@@ -23,16 +23,12 @@ public class GitHubWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    public LinkInfo fetch(URL url) {
-        if (!isValid(url)) {
-            log.warn("URL {} is invalid", url);
-            return null;
-        }
-
+    public LinkInfo fetch(URI url) {
         GitHubResponse info = doRequest(url.getPath(), GitHubResponse.class, GitHubResponse.EMPTY_RESPONSE);
-        log.info("info {} from url {}", info, url);
+        log.info("got info {} from url {}", info, url);
 
         if (info == null || info.equals(GitHubResponse.EMPTY_RESPONSE)) {
+            log.warn("received empty result with link {}", url);
             return null;
         }
 
@@ -40,7 +36,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    protected boolean isValid(URL url) {
+    public boolean isValid(URI url) {
         return REPOSITORY_PATTERN.matcher(url.toString()).matches();
     }
 
@@ -55,7 +51,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
         private static final GitHubResponse EMPTY_RESPONSE =
             new GitHubResponse(0, null, null, null);
 
-        private LinkInfo toLinkInfo(URL url) {
+        private LinkInfo toLinkInfo(URI url) {
             return new LinkInfo(url, id, fullName, description, lastModified);
         }
     }

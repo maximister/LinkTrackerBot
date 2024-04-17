@@ -26,6 +26,7 @@ public class DbMigrationTest extends IntegrationEnvironment {
         var meta = statement.executeQuery().getMetaData();
         assertThat(meta.getColumnName(1)).isEqualTo("link_id");
         assertThat(meta.getColumnName(2)).isEqualTo("last_update");
-        assertThat(meta.getColumnName(3)).isEqualTo("url");
+        assertThat(meta.getColumnName(3)).isEqualTo("last_check");
+        assertThat(meta.getColumnName(4)).isEqualTo("url");
     }
 }

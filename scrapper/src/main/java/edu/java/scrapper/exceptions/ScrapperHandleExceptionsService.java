@@ -1,7 +1,6 @@
-package edu.java.scrapper.controller;
+package edu.java.scrapper.exceptions;
 
-import edu.java.scrapper.exceptions.ScrapperException;
-import edu.java.scrapper.model.ApiErrorResponse;
+import edu.java.scrapper.model.ControllerDto.ApiErrorResponse;
 import java.util.Arrays;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;

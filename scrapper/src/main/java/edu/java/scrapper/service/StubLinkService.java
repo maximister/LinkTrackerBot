@@ -1,14 +1,14 @@
 package edu.java.scrapper.service;
 
-import edu.java.scrapper.model.AddLinkRequest;
-import edu.java.scrapper.model.LinkResponse;
-import edu.java.scrapper.model.ListLinksResponse;
-import edu.java.scrapper.model.RemoveLinkRequest;
+import edu.java.scrapper.model.ControllerDto.AddLinkRequest;
+import edu.java.scrapper.model.ControllerDto.LinkResponse;
+import edu.java.scrapper.model.ControllerDto.ListLinksResponse;
+import edu.java.scrapper.model.ControllerDto.RemoveLinkRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("StubLinkService")
 public class StubLinkService implements LinkService {
     @Override
     public ResponseEntity<ListLinksResponse> getLinks(Long id) {

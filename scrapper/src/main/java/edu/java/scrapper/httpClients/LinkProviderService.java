@@ -1,7 +1,11 @@
 package edu.java.scrapper.httpClients;
 
-import java.net.URL;
+import jakarta.annotation.Nullable;
+import java.net.URI;
 
 public interface LinkProviderService {
-    LinkInfo fetch(URL url);
+    @Nullable
+    LinkInfo fetch(URI url);
+
+    boolean isValid(URI url);
 }

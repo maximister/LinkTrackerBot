@@ -2,6 +2,7 @@ package edu.java.scrapper.controller;
 
 import edu.java.scrapper.service.TgChatService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TgChatsController {
     private final TgChatService tgChatService;
 
-    public TgChatsController(TgChatService tgChatService) {
+    public TgChatsController(@Qualifier("JdbcChatService") TgChatService tgChatService) {
         this.tgChatService = tgChatService;
     }
 

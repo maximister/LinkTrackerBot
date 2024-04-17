@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("StubChatService")
 public class StubTgChatService implements TgChatService {
 
     @Override

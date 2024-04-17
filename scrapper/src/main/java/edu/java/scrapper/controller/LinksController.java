@@ -1,13 +1,14 @@
 package edu.java.scrapper.controller;
 
-import edu.java.scrapper.model.AddLinkRequest;
-import edu.java.scrapper.model.LinkResponse;
-import edu.java.scrapper.model.ListLinksResponse;
-import edu.java.scrapper.model.RemoveLinkRequest;
+import edu.java.scrapper.model.ControllerDto.AddLinkRequest;
+import edu.java.scrapper.model.ControllerDto.LinkResponse;
+import edu.java.scrapper.model.ControllerDto.ListLinksResponse;
+import edu.java.scrapper.model.ControllerDto.RemoveLinkRequest;
 import edu.java.scrapper.service.LinkService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 @Slf4j
 public class LinksController {
-
-    //по идее тут везде могу вернуть только заглушки
-    //дальше как я понял, с появлением бд нужно дабить слои в виде сервиса и репозитория, да?
-
     private final LinkService linkService;
 
-    public LinksController(LinkService linkService) {
+    public LinksController(@Qualifier("JdbcLinkService") LinkService linkService) {
         this.linkService = linkService;
     }
 
