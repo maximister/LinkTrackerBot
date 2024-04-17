@@ -11,6 +11,7 @@ import edu.java.scrapper.repository.LinkRepository;
 import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,8 +37,8 @@ public class LinkUpdaterScheduler {
     public LinkUpdaterScheduler(
         BotClient botClient,
         List<LinkProviderService> providers,
-        LinkRepository linkRepository,
-        ChatLinkRepository chatLinkRepository
+        @Qualifier("JdbcLinkRepository") LinkRepository linkRepository,
+        @Qualifier("JdbcChatLinkRepository") ChatLinkRepository chatLinkRepository
     ) {
         this.botClient = botClient;
         this.providers = providers;
@@ -75,7 +76,7 @@ public class LinkUpdaterScheduler {
                     LinkUpdate botUpdate = new LinkUpdate(
                         link.linkId(),
                         link.url(),
-                        "Update request for bot",
+                        update.description(),
                         chats
                     );
                     botClient.sendMessage(botUpdate);

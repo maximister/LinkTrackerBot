@@ -46,7 +46,6 @@ public class StackOverflowWebClientServiceTest {
 
         CORRECT_DTO = new LinkInfo(
             new URI("https://stackoverflow.com/questions/53579112/inject-list-of-all-beans-with-a-certain-interface"),
-            53579112,
             "Inject list of all beans with a certain interface",
             "view count: 25154\nanswer count: 1",
             OffsetDateTime.parse("2018-12-02T10:01:54Z", DateTimeFormatter.ISO_DATE_TIME)

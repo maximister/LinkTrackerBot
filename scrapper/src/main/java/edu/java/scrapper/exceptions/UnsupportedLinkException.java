@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 public final class UnsupportedLinkException extends ScrapperException {
     public UnsupportedLinkException(URI url) {
         super(
-            "Ссылка %s не поддерживается".formatted(url.toString()),
-            "Получена неподдерживаемая ссылка",
+            "Link %s is unsupported".formatted(url.toString()),
+            "Received unsupported link",
             HttpStatus.BAD_REQUEST
         );
     }

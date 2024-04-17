@@ -1,6 +1,7 @@
 package edu.java.scrapper.configuration;
 
 import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @PropertySource("classpath:application.yml")
+@Slf4j
 public class JdbcConfig {
 
     @Value("${spring.datasource.url}")
@@ -34,6 +36,7 @@ public class JdbcConfig {
 
     @Bean
     public JdbcTemplate jdbcTemplate() {
+        log.info("Db connection created");
         return new JdbcTemplate(dataSource());
     }
 }

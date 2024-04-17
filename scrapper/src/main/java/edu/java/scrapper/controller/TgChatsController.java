@@ -1,6 +1,13 @@
 package edu.java.scrapper.controller;
 
+import edu.java.scrapper.model.ControllerDto.ApiErrorResponse;
 import edu.java.scrapper.service.TgChatService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +28,18 @@ public class TgChatsController {
     }
 
     @PostMapping("/{id}")
+    @Operation(summary = "Зарегистрировать чат")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Чат зарегистрирован"),
+        @ApiResponse(responseCode = "400",
+                     description = "Некорректные параметры запроса",
+                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(responseCode = "409",
+                     description = "Чат уже зарегистрирован",
+                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
     public ResponseEntity<Void> addChat(
+        @Parameter(description = "Id чата в telegram", required = true)
         @PathVariable("id")
         Long id
     ) {
@@ -30,7 +48,18 @@ public class TgChatsController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить чат")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Чат успешно удалён"),
+        @ApiResponse(responseCode = "400",
+                     description = "Некорректные параметры запроса",
+                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(responseCode = "404",
+                     description = "Чат не существует",
+                     content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
     public ResponseEntity<Void> deleteChat(
+        @Parameter(description = "Id чата в telegram", required = true)
         @PathVariable
         Long id
     ) {

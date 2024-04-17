@@ -38,11 +38,11 @@ public class ScrapperClientTest {
         server = new WireMockServer(wireMockConfig().dynamicPort());
         //Chat controller
         //post
-        server.stubFor(post(urlPathMatching(CHAT_ENDPOINT))
+        server.stubFor(post(urlPathMatching(CHAT_ENDPOINT + "/1"))
             .willReturn(aResponse()
                 .withStatus(200)));
         //delete
-        server.stubFor(delete(urlPathMatching(CHAT_ENDPOINT))
+        server.stubFor(delete(urlPathMatching(CHAT_ENDPOINT + "/1"))
             .willReturn(aResponse()
                 .withStatus(200)));
 
@@ -84,7 +84,7 @@ public class ScrapperClientTest {
     public void addChat_shouldSendRequestToChatController() {
         client.addChat(1L);
 
-        server.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT)));
+        server.verify(1, WireMock.postRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT + "/1")));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ScrapperClientTest {
     public void deleteChat_shouldSendRequestToChatController() {
         client.deleteChat(1L);
 
-        server.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT)));
+        server.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(CHAT_ENDPOINT + "/1")));
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ScrapperClientTest {
         LinkResponse response = client.deleteLink(1L, removeLinkRequest);
 
         LinkResponse expected = new LinkResponse(1L, URI.create("oguzok.com"));
-        
+
         assertThat(response).isEqualTo(expected);
         server.verify(1, WireMock.deleteRequestedFor(WireMock.urlEqualTo(LINK_ENDPOINT)));
     }

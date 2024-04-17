@@ -13,6 +13,7 @@ import edu.java.scrapper.repository.ChatLinkRepository;
 import edu.java.scrapper.repository.ChatRepository;
 import edu.java.scrapper.repository.LinkRepository;
 import edu.java.scrapper.service.LinkService;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,12 +47,17 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ResponseEntity<ListLinksResponse> getLinks(Long tgChatId) {
         checkChat(tgChatId);
 
         List<Long> linksIds = chatLinkRepository.getLinkIdsByChatId(tgChatId);
-        List<Link> links = linkRepository.getLinks(linksIds);
+        List<Link> links = null;
+        if (!linksIds.isEmpty()) {
+            links = linkRepository.getLinks(linksIds);
+        } else {
+            links = Collections.emptyList();
+        }
 
         log.info("List of links for chat {} was formed", tgChatId);
         return new ResponseEntity<>(
@@ -67,7 +73,6 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     public ResponseEntity<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
         checkChat(tgChatId);
-
         Link resultLink = linkRepository.findLinkByUrl(addLinkRequest.url());
         if (resultLink == null) {
             resultLink = linkRepository.addLink(addLinkRequest.url());

@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 public final class UnauthorizedChatException extends ScrapperException {
     public UnauthorizedChatException(long chatId) {
         super(
-            "Чат %s не зарегистрирован".formatted(chatId),
-            "Невозможно взаимодействовать с чатом до регистрации",
+            "Chat %s has not registered".formatted(chatId),
+            "Impossible to process chat before it's registration",
             HttpStatus.UNAUTHORIZED
         );
     }
