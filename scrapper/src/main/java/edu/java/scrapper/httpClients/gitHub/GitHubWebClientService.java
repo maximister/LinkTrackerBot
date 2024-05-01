@@ -5,7 +5,10 @@ import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -34,8 +37,8 @@ public class GitHubWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    public LinkInfo fetch(URI url) {
-        LinkInfo eventsInfo = fetchEvents(url);
+    public List<LinkInfo> fetch(URI url) {
+        List<LinkInfo> eventsInfo = fetchEvents(url);
 
         if (eventsInfo != null) {
             log.info("got events info {} from url {}", eventsInfo, url);
@@ -52,13 +55,13 @@ public class GitHubWebClientService extends LinkProviderWebService {
 
         if (info == null || info.equals(GitHubResponse.EMPTY_RESPONSE)) {
             log.warn("received empty result with link {}", url);
-            return null;
+            return Collections.emptyList();
         }
 
-        return info.toLinkInfo(url);
+        return List.of(info.toLinkInfo(url));
     }
 
-    private LinkInfo fetchEvents(URI url) {
+    private List<LinkInfo> fetchEvents(URI url) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
 
@@ -102,32 +105,28 @@ public class GitHubWebClientService extends LinkProviderWebService {
         private GitHubEventDtoToLinkInfoMapper() {
         }
 
-        static LinkInfo getLinkInfo(GitHubEventDto[] events, URI url) {
-            StringBuilder message = new StringBuilder();
+        static List<LinkInfo> getLinkInfo(GitHubEventDto[] events, URI url) {
             Set<String> eventTypes = Arrays
                 .stream(GitHubEventType.values())
                 .map(GitHubEventType::getType)
                 .collect(Collectors.toSet());
 
-            OffsetDateTime lastUpdate = OffsetDateTime.MIN;
+            List<LinkInfo> linkInfoList = new ArrayList<>();
 
             for (GitHubEventDto event : events) {
                 if (eventTypes.contains(event.type())) {
-                    message.append(GitHubEventType.getGitHubEventMessage(event));
-                    if (lastUpdate.isBefore(event.updateTime())) {
-                        lastUpdate = event.updateTime();
-                    }
+                    linkInfoList.add(
+                        new LinkInfo(
+                            url,
+                            "GitHub update",
+                            GitHubEventType.getGitHubEventMessage(event, url),
+                            event.updateTime()
+                        )
+                    );
                 }
             }
-            log.debug(message.toString());
 
-            return new LinkInfo(
-                url,
-                "GitHub update",
-                message.toString(),
-                lastUpdate
-            );
-
+            return linkInfoList;
         }
     }
 }

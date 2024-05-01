@@ -1,4 +1,4 @@
-package edu.java.scrapper.service.jooqService;
+package edu.java.scrapper.service.jpaService;
 
 import edu.java.scrapper.exceptions.ChatNotFoundException;
 import edu.java.scrapper.exceptions.LinkAlreadyTrackedException;
@@ -11,34 +11,28 @@ import edu.java.scrapper.model.ControllerDto.RemoveLinkRequest;
 import edu.java.scrapper.model.botClientDto.LinkUpdate;
 import edu.java.scrapper.model.domainDto.Link;
 import edu.java.scrapper.model.mappers.LinkMapper;
-import edu.java.scrapper.repository.ChatLinkRepository;
-import edu.java.scrapper.repository.ChatRepository;
-import edu.java.scrapper.repository.LinkRepository;
+import edu.java.scrapper.repository.jpa.JpaChatRepository;
+import edu.java.scrapper.repository.jpa.JpaLinkRepository;
+import edu.java.scrapper.repository.jpa.entity.ChatEntity;
+import edu.java.scrapper.repository.jpa.entity.LinkEntity;
 import edu.java.scrapper.service.LinkService;
 import java.time.Duration;
-import java.util.Collections;
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-public class JooqLinkService implements LinkService {
-    private final LinkRepository linkRepository;
-    private final ChatLinkRepository chatLinkRepository;
-    private final ChatRepository chatRepository;
+public class JpaLinkService implements LinkService {
+    private final JpaLinkRepository linkRepository;
+    private final JpaChatRepository chatRepository;
     private final LinkMapper mapper;
 
-    public JooqLinkService(
-        LinkRepository linkRepository,
-        ChatLinkRepository repository,
-        ChatRepository chatRepository,
-        LinkMapper mapper
-    ) {
+    public JpaLinkService(JpaLinkRepository linkRepository, JpaChatRepository chatRepository, LinkMapper mapper) {
         this.linkRepository = linkRepository;
-        this.chatLinkRepository = repository;
         this.chatRepository = chatRepository;
         this.mapper = mapper;
     }
@@ -46,21 +40,18 @@ public class JooqLinkService implements LinkService {
     @Override
     @Transactional
     public ResponseEntity<ListLinksResponse> getLinks(Long tgChatId) {
-        checkChat(tgChatId);
-
-        List<Long> linksIds = chatLinkRepository.getLinkIdsByChatId(tgChatId);
-        List<Link> links = null;
-        if (!linksIds.isEmpty()) {
-            links = linkRepository.getLinks(linksIds);
-        } else {
-            links = Collections.emptyList();
-        }
+        List<LinkResponse> responses = chatRepository.findById(tgChatId)
+            .orElseThrow(() -> new ChatNotFoundException(tgChatId))
+            .getLinks()
+            .stream()
+            .map(mapper::linkEntityToLinkResponse)
+            .toList();
 
         log.info("List of links for chat {} was formed", tgChatId);
         return new ResponseEntity<>(
             new ListLinksResponse(
-                links.stream().map(mapper::linkToLinkResponse).toList(),
-                links.size()
+                responses,
+                responses.size()
             ),
             HttpStatus.OK
         );
@@ -69,80 +60,76 @@ public class JooqLinkService implements LinkService {
     @Override
     @Transactional
     public ResponseEntity<LinkResponse> addLink(Long tgChatId, AddLinkRequest addLinkRequest) {
-        checkChat(tgChatId);
-        Link resultLink = linkRepository.findLinkByUrl(addLinkRequest.url());
-        if (resultLink == null) {
-            resultLink = linkRepository.addLink(addLinkRequest.url());
-        }
+        ChatEntity chat = chatRepository.findById(tgChatId)
+            .orElseThrow(() -> new ChatNotFoundException(tgChatId));
 
-        try {
-            chatLinkRepository.addChatLinkConnection(tgChatId, resultLink.linkId());
-        } catch (DataAccessException e) {
+        LinkEntity link = linkRepository.findByUrl(addLinkRequest.url().toString())
+            .orElseGet(() -> linkRepository.save(new LinkEntity(addLinkRequest.url().toString())));
+
+        if (chat.getLinks().contains(link)) {
             log.debug("Chat {} tried to add already tracked link {}", tgChatId, addLinkRequest.url());
             throw new LinkAlreadyTrackedException(addLinkRequest.url());
         }
 
+        chat.addLink(link);
         log.info("Chat {} has added link {}", tgChatId, addLinkRequest.url());
-        return new ResponseEntity<>(mapper.linkToLinkResponse(resultLink), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.linkEntityToLinkResponse(link), HttpStatus.OK);
     }
 
     @Override
     @Transactional
     public ResponseEntity<LinkResponse> deleteLink(Long tgChatId, RemoveLinkRequest removeLinkRequest) {
-        checkChat(tgChatId);
+        ChatEntity chat = chatRepository.findById(tgChatId)
+            .orElseThrow(() -> new ChatNotFoundException(tgChatId));
 
-        Link link = linkRepository.findLinkByUrl(removeLinkRequest.link());
-        if (link == null) {
+        Optional<LinkEntity> linkEntity = linkRepository.findByUrl(removeLinkRequest.link().toString());
+        if (linkEntity.isEmpty()) {
             log.debug("Chat {} tried to delete not existed link {}", tgChatId, removeLinkRequest.link());
             throw new LinkNotFoundException(removeLinkRequest.link());
         }
 
-        try {
-            chatLinkRepository.deleteChatLinkConnection(tgChatId, link.linkId());
-        } catch (DataAccessException e) {
+        if (!chat.getLinks().contains(linkEntity.get())) {
             log.debug("Chat {} tried to delete untracked link {}", tgChatId, removeLinkRequest.link());
             throw new LinkNotFoundException(removeLinkRequest.link());
         }
 
+        chat.getLinks().remove(linkEntity.get());
+        linkEntity.get().getChats().remove(chat);
+
         //Проверяем, остслеживается ли ссылка другими пользователями, если нет - удаляем
-        if (!chatLinkRepository.isLinkTracked(link.linkId())) {
-            linkRepository.deleteLink(link.linkId());
+        if (linkEntity.get().getChats().isEmpty()) {
+            linkRepository.delete(linkEntity.get());
             log.info("Removing link {}. No one chat track this lisk", removeLinkRequest.link());
         }
 
         log.info("Chat {} successfully deleted connection with link {}", tgChatId, removeLinkRequest.link());
-        return new ResponseEntity<>(mapper.linkToLinkResponse(link), HttpStatus.OK);
+        return new ResponseEntity<>(mapper.linkEntityToLinkResponse(linkEntity.get()), HttpStatus.OK);
     }
 
     @Override
     @Transactional
     public LinkUpdate updateLink(LinkInfo update) {
-        Link link = linkRepository.findLinkByUrl(update.url());
-        if (link == null) {
-            log.debug("Link {} was not found", update.url());
-            throw new LinkAlreadyTrackedException(update.url());
-        }
+        LinkEntity link = linkRepository.findByUrl(update.url().toString())
+            .orElseThrow(() -> new LinkNotFoundException(update.url()));
 
-        linkRepository.updateLink(update);
+        link.setLastCheck(OffsetDateTime.now());
+        link.setLastUpdate(update.lastModified());
 
         return new LinkUpdate(
-            link.linkId(),
+            link.getLinkId(),
             update.url(),
             update.description(),
-            chatLinkRepository.getChatIdsByLinkId(link.linkId())
+            link.getChats().stream()
+                .map(ChatEntity::getChatId)
+                .toList()
         );
     }
 
     @Override
     public List<Link> getLinksForUpdate(Duration offset) {
-        return linkRepository.findLinksByUpdateTime(offset);
-    }
-
-    private void checkChat(Long tgChatId) {
-        if (chatRepository.findChatById(tgChatId) == null) {
-            log.debug("Chat with id {} was not found", tgChatId);
-            throw new ChatNotFoundException(tgChatId);
-        }
+        return linkRepository.findByLastCheckBefore(OffsetDateTime.now().minus(offset))
+            .stream()
+            .map(mapper::linkEntityToLink)
+            .toList();
     }
 }
-

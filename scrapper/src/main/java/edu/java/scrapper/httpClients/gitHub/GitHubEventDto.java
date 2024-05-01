@@ -7,6 +7,9 @@ public record GitHubEventDto(
     String type,
     EventInfo payload,
     UserInfo actor,
+
+    @JsonProperty("repo")
+    RepoInfo repo,
     @JsonProperty("created_at")
     OffsetDateTime updateTime) {
     public record EventInfo(
@@ -23,5 +26,8 @@ public record GitHubEventDto(
     }
 
     public record UserInfo(String login) {
+    }
+
+    public record RepoInfo(String name) {
     }
 }

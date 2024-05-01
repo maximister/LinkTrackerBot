@@ -3,27 +3,27 @@ package edu.java.scrapper.service.jdbcService;
 import edu.java.scrapper.exceptions.ChatNotFoundException;
 import edu.java.scrapper.exceptions.LinkAlreadyTrackedException;
 import edu.java.scrapper.exceptions.LinkNotFoundException;
+import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.model.ControllerDto.AddLinkRequest;
 import edu.java.scrapper.model.ControllerDto.LinkResponse;
 import edu.java.scrapper.model.ControllerDto.ListLinksResponse;
 import edu.java.scrapper.model.ControllerDto.RemoveLinkRequest;
+import edu.java.scrapper.model.botClientDto.LinkUpdate;
 import edu.java.scrapper.model.domainDto.Link;
 import edu.java.scrapper.model.mappers.LinkMapper;
 import edu.java.scrapper.repository.ChatLinkRepository;
 import edu.java.scrapper.repository.ChatRepository;
 import edu.java.scrapper.repository.LinkRepository;
 import edu.java.scrapper.service.LinkService;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("JdbcLinkService")
 @Slf4j
 public class JdbcLinkService implements LinkService {
     private final LinkRepository linkRepository;
@@ -32,11 +32,8 @@ public class JdbcLinkService implements LinkService {
     private final LinkMapper mapper;
 
     public JdbcLinkService(
-        @Qualifier("JdbcLinkRepository")
         LinkRepository linkRepository,
-        @Qualifier("JdbcChatLinkRepository")
         ChatLinkRepository repository,
-        @Qualifier("JdbcChatRepository")
         ChatRepository chatRepository,
         LinkMapper mapper
     ) {
@@ -115,6 +112,30 @@ public class JdbcLinkService implements LinkService {
 
         log.info("Chat {} successfully deleted connection with link {}", tgChatId, removeLinkRequest.link());
         return new ResponseEntity<>(mapper.linkToLinkResponse(link), HttpStatus.OK);
+    }
+
+    @Override
+    @Transactional
+    public LinkUpdate updateLink(LinkInfo update) {
+        Link link = linkRepository.findLinkByUrl(update.url());
+        if (link == null) {
+            log.debug("Link {} was not found", update.url());
+            throw new LinkAlreadyTrackedException(update.url());
+        }
+
+        linkRepository.updateLink(update);
+
+        return new LinkUpdate(
+            link.linkId(),
+            update.url(),
+            update.description(),
+            chatLinkRepository.getChatIdsByLinkId(link.linkId())
+        );
+    }
+
+    @Override
+    public List<Link> getLinksForUpdate(Duration offset) {
+        return linkRepository.findLinksByUpdateTime(offset);
     }
 
     private void checkChat(Long tgChatId) {

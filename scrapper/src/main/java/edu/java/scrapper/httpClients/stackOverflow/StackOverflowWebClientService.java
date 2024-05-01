@@ -5,6 +5,7 @@ import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +32,7 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
     }
 
     @Override
-    public LinkInfo fetch(URI url) {
+    public List<LinkInfo> fetch(URI url) {
         Matcher matcher = STACKOVERFLOW_PATTERN.matcher(url.toString());
         matcher.matches();
         String id = matcher.group(1);
@@ -47,10 +48,10 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
 
         if (info == null || info.equals(StackOverflowRequest.EMPTY_RESPONSE)) {
             log.warn("received empty result with link {}", url);
-            return null;
+            return Collections.emptyList();
         }
 
-        return info.toLinkInfo(url);
+        return List.of(info.toLinkInfo(url));
     }
 
     @Override

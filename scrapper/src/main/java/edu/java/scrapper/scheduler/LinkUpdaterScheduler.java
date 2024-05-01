@@ -6,12 +6,11 @@ import edu.java.scrapper.httpClients.LinkProviderService;
 import edu.java.scrapper.httpClients.botClient.BotClient;
 import edu.java.scrapper.model.botClientDto.LinkUpdate;
 import edu.java.scrapper.model.domainDto.Link;
-import edu.java.scrapper.repository.ChatLinkRepository;
-import edu.java.scrapper.repository.LinkRepository;
+import edu.java.scrapper.service.LinkService;
+import edu.java.scrapper.service.TgChatService;
 import java.time.Duration;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,20 +29,15 @@ public class LinkUpdaterScheduler {
     private boolean isEnable;
     private final BotClient botClient;
     private final List<LinkProviderService> providers;
-    private final LinkRepository linkRepository;
-    private final ChatLinkRepository chatLinkRepository;
-
+    private final LinkService linkService;
 
     public LinkUpdaterScheduler(
         BotClient botClient,
-        List<LinkProviderService> providers,
-        @Qualifier("JdbcLinkRepository") LinkRepository linkRepository,
-        @Qualifier("JdbcChatLinkRepository") ChatLinkRepository chatLinkRepository
+        List<LinkProviderService> providers, LinkService linkService, TgChatService chatService
     ) {
         this.botClient = botClient;
         this.providers = providers;
-        this.linkRepository = linkRepository;
-        this.chatLinkRepository = chatLinkRepository;
+        this.linkService = linkService;
     }
 
     @Scheduled(fixedDelayString = "#{@'app-edu.java.scrapper.configuration.ApplicationConfig'.scheduler.interval}")
@@ -54,9 +48,9 @@ public class LinkUpdaterScheduler {
             return;
         }
 
-        List<Link> linksForUpdate = linkRepository.findLinksByUpdateTime(forceCheckDelay);
+        List<Link> linksForUpdate = linkService.getLinksForUpdate(forceCheckDelay);
 
-        for (Link link: linksForUpdate) {
+        for (Link link : linksForUpdate) {
             LinkProviderService client = providers.stream()
                 .filter(p -> p.isValid(link.url()))
                 .findFirst()
@@ -65,22 +59,16 @@ public class LinkUpdaterScheduler {
                     return new UnsupportedLinkException(link.url());
                 });
 
-            LinkInfo update = client.fetch(link.url());
-            if (update == null) {
+            List<LinkInfo> updates = client.fetch(link.url());
+            if (updates.isEmpty()) {
                 log.warn("Scheduler has gotten empty answer");
             } else {
-                if (update.lastModified().isAfter(link.lastUpdate())) {
-                    linkRepository.updateLink(update);
-                    List<Long> chats = chatLinkRepository.getChatIdsByLinkId(link.linkId());
-
-                    LinkUpdate botUpdate = new LinkUpdate(
-                        link.linkId(),
-                        link.url(),
-                        update.description(),
-                        chats
-                    );
-                    botClient.sendMessage(botUpdate);
-                    log.info("Scheduler has updated link {}", link.url());
+                for (LinkInfo update : updates) {
+                    if (update.lastModified().isAfter(link.lastUpdate())) {
+                        LinkUpdate botUpdate = linkService.updateLink(update);
+                        botClient.sendMessage(botUpdate);
+                        log.info("Scheduler has updated link {}", link.url());
+                    }
                 }
             }
         }

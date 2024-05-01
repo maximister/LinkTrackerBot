@@ -3,6 +3,7 @@ app:
     enable: true
     interval: 15s
     force-check-delay: 15s
+  database-access-type: jdbc
   allowedUrlPatterns:
     - https://github.com/(?<owner>.+)/(?<repo>.+)
     - https://stackoverflow.com/questions/(\d+).*

@@ -30,10 +30,10 @@ public class JdbcChatLinkRepositoryTest extends IntegrationEnvironment {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    @Qualifier("JdbcLinkRepository")
+    @Qualifier("jdbcLinkRepository")
     private LinkRepository linkRepository;
     @Autowired
-    @Qualifier("JdbcChatRepository")
+    @Qualifier("jdbcChatRepository")
     private ChatRepository chatRepository;
 
     @SneakyThrows

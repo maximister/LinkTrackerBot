@@ -1,7 +1,8 @@
-package edu.java.scrapper.service.jdbcService;
+package edu.java.scrapper.service.jpaService;
 
 import edu.java.scrapper.exceptions.ChatAlreadyRegisteredException;
-import edu.java.scrapper.repository.ChatRepository;
+import edu.java.scrapper.repository.jpa.JpaChatRepository;
+import edu.java.scrapper.repository.jpa.entity.ChatEntity;
 import edu.java.scrapper.service.TgChatService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -10,17 +11,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-public class JdbcChatService implements TgChatService {
-    private final ChatRepository chatRepository;
+public class JpaChatService implements TgChatService {
+    private final JpaChatRepository repository;
 
-    public JdbcChatService(ChatRepository repository) {
-        this.chatRepository = repository;
+    public JpaChatService(JpaChatRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public ResponseEntity<Void> addChat(Long id) {
         try {
-            chatRepository.addChat(id);
+            repository.save(new ChatEntity(id));
             log.info("Chat with id {} was successfully registered", id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException e) {
@@ -33,7 +34,7 @@ public class JdbcChatService implements TgChatService {
     @Transactional
     public ResponseEntity<Void> deleteChat(Long id) {
         try {
-            chatRepository.deleteChat(id);
+            repository.deleteById(id);
             log.info("Chat with id {} was successfully deleted", id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (DataAccessException e) {
