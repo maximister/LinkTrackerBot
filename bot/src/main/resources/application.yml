@@ -6,6 +6,11 @@ spring:
     name: bot
   jackson:
     time-zone: UTC
+  cache:
+    cache-names:
+      - rate-limit-buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
 
 server:
   port: 8090
@@ -18,3 +23,38 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
 
+retry-config:
+  retries:
+    - client: scrapper
+      type: exponential
+      max-attempts: 3
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      http-response-headers:
+        Content-Type: "application/json; charset=utf-8"
+      http-response-body: |
+        {
+          "description": "The number of requests from the current IP has been exceeded",
+          "code": 429,
+          "exceptionName": "Rate limit exceeded",
+          "exceptionMessage": "You <b>exceeded </b> the number of available requests, please try again later"
+        }
+      rate-limits:
+        - bandwidths:
+            - capacity: 1
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()
+
+rate-limiter:
+  whitelist: 127.0.0.1

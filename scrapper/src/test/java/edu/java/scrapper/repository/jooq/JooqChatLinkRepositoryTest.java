@@ -39,6 +39,7 @@ public class JooqChatLinkRepositoryTest extends IntegrationEnvironment {
     @SneakyThrows
     @BeforeEach
     public void fillTable() {
+        jdbcTemplate.update("TRUNCATE TABLE chat_link, link, chat RESTART IDENTITY CASCADE");
         //fill chats
         chatRepository.addChat(1);
         chatRepository.addChat(2);

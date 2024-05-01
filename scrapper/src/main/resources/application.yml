@@ -1,6 +1,6 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: 15s
     force-check-delay: 15s
   database-access-type: jdbc
@@ -16,6 +16,21 @@ spring:
     username: postgres
     password: postgres
     driverClassName: org.postgresql.Driver
+  jooq:
+    sql-dialect: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+  cache:
+    jcache:
+      provider: com.github.benmanes.caffeine.jcache.spi.CaffeineCachingProvider
+    cache-names:
+      - rate-limit-bucket
+    caffeine:
+      spec: maximumSize=1000000,expireAfterAccess=3600s
   liquibase:
     enabled: false
 
@@ -36,4 +51,53 @@ client:
     access-token: ${STACKOVERFLOW_ACCESS_TOKEN:}
     key: ${STACKOVERFLOW_KEY:}
 
+retry-config:
+  retries:
+    - client: bot
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: github
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+    - client: stackoverflow
+      type: exponential
+      max-attempts: 5
+      step: 2
+      delay: 2s
+      codes:
+        - 500
 
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      http-response-headers:
+        Content-Type: "application/json; charset=utf-8"
+      http-response-body: |
+        {
+         "description": "The number of requests from the current IP has been exceeded",
+         "code": 429,
+         "exceptionName": "Rate limit exceeded",
+         "exceptionMessage": "You <b>exceeded </b> the number of available requests, please try again later"
+        }
+      rate-limits:
+        - bandwidths:
+            - capacity: 1
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()
+
+rate-limiter:
+  whitelist: 127.0.0.1

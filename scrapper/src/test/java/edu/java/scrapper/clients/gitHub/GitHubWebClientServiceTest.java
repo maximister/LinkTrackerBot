@@ -2,15 +2,18 @@ package edu.java.scrapper.clients.gitHub;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import edu.java.scrapper.configuration.RetryConfig;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderService;
 import edu.java.scrapper.httpClients.gitHub.GitHubWebClientService;
 import java.net.URI;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -61,7 +64,11 @@ public class GitHubWebClientServiceTest {
         );
 
         server.start();
-        service = new GitHubWebClientService(server.baseUrl());
+        RetryConfig configuration = new RetryConfig(
+            List.of(new RetryConfig.RetryInfo("github", "fixed", 1, 1,
+                Duration.ofSeconds(1), Set.of(500)
+            )));
+        service = new GitHubWebClientService(server.baseUrl(), configuration);
     }
 
     @SneakyThrows
