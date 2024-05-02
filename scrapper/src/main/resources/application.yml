@@ -1,9 +1,10 @@
 app:
   scheduler:
-    enable: false
+    enable: true
     interval: 15s
     force-check-delay: 15s
   database-access-type: jdbc
+  use-queue: true
   allowedUrlPatterns:
     - https://github.com/(?<owner>.+)/(?<repo>.+)
     - https://stackoverflow.com/questions/(\d+).*
@@ -43,6 +44,20 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+kafka:
+  bootstrapServers: localhost:9092
+  client-id: bot
+  acksMode: all
+  deliveryTimeout: 60s
+  lingerMs: 12_000
+  batchSize: 100_000
+  topic:
+    name: scrapper-bot-mq
+    partitions: 2
+    replicas: 1
+
+
 
 client:
   github:
@@ -98,6 +113,7 @@ bucket4j:
               unit: hours
               refill-speed: interval
           cache-key: getRemoteAddr()
+          skip-condition: '@limitService.isSkipped(getRemoteAddr())'
 
 rate-limiter:
   whitelist: 127.0.0.1

@@ -49,7 +49,7 @@ public class GitHubWebClientService extends LinkProviderWebService {
         List<LinkInfo> eventsInfo = fetchEvents(url);
 
         if (eventsInfo != null) {
-            log.info("got events info {} from url {}", eventsInfo, url);
+            log.info("got events info from url {}", url);
             return eventsInfo;
         }
 

@@ -12,6 +12,28 @@ spring:
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
 
+
+kafka:
+  consumer:
+    bootstrap-servers: localhost:9092
+    group-id: bot
+    auto-offset-reset: earliest
+    max-poll-interval-ms: 300_000
+    enable-auto-commit: false
+    concurrency: 1
+  producer:
+    bootstrap-servers: localhost:9092
+    client-id: bot
+    acks-mode: 0
+    delivery-timeout: 60s
+    linger-ms: 1_000
+    batch-size: 100_000
+
+kafka-topic:
+  name: scrapper-bot-mq
+  partitions: 2
+  replicas: 1
+
 server:
   port: 8090
 
@@ -55,6 +77,7 @@ bucket4j:
               unit: hours
               refill-speed: interval
           cache-key: getRemoteAddr()
+          skip-condition: '@limitService.isSkipped(getRemoteAddr())'
 
 rate-limiter:
   whitelist: 127.0.0.1
