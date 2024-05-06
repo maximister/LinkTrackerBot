@@ -8,10 +8,10 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import static edu.java.scrapper.repository.jooq.tables.Link.LINK;
 
-@Repository("JooqLinkRepository")
+@Service
 public class JooqLinkRepository implements LinkRepository {
     private final DSLContext context;
 

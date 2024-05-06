@@ -1,5 +1,6 @@
 package edu.java.scrapper.httpClients.gitHub;
 
+import java.net.URI;
 import lombok.Getter;
 
 @SuppressWarnings("checkstyle:MultipleStringLiterals")
@@ -21,11 +22,11 @@ public enum GitHubEventType {
     //вообще, наверное в идеале этот процесс должен происходить на стороне бота,
     //а скраппер должен просто отправить дто с данными, но пока так,
     // чтобы вписаться в существующую систему с минимальными изменениями
-    public static String getGitHubEventMessage(GitHubEventDto dto) {
-        String user = "User " + dto.actor().login();
+    public static String getGitHubEventMessage(GitHubEventDto dto, URI uri) {
+        String user = "User **" + dto.actor().login() + "**";
 
         StringBuilder message = new StringBuilder();
-        message.append(user).append("/n");
+        message.append(user).append("\n");
 
         switch (dto.type()) {
             case "PushEvent" -> {
@@ -44,20 +45,20 @@ public enum GitHubEventType {
 
                 if (dto.payload().action().equals("opened")) {
                     message.append("Created new issue ")
-                        .append(createHtmlHyperlink(url, title))
+                        .append(createMdHyperlink(url, title))
                         .append("\n")
                         .append("Update time: ")
                         .append(dto.updateTime());
                 } else if (dto.payload().action().equals("closed")) {
                     message.append("Issue ")
-                        .append(createHtmlHyperlink(url, title))
+                        .append(createMdHyperlink(url, title))
                         .append(" was solved")
                         .append("\n")
                         .append("Update time: ")
                         .append(dto.updateTime());
                 } else {
                     message.append("Changes in issue ")
-                        .append(createHtmlHyperlink(url, title))
+                        .append(createMdHyperlink(url, title))
                         .append("\n")
                         .append("Update time: ")
                         .append(dto.updateTime());
@@ -67,7 +68,7 @@ public enum GitHubEventType {
                 String url = dto.payload().issue().url();
                 String title = dto.payload().issue().title();
                 message.append("Commented ")
-                    .append(createHtmlHyperlink(url, title))
+                    .append(createMdHyperlink(url, title))
                     .append("\n")
                     .append("Update time: ")
                     .append(dto.updateTime());
@@ -83,7 +84,7 @@ public enum GitHubEventType {
                     String title = dto.payload().pullRequest().title();
                     String url = dto.payload().pullRequest().url();
                     message.append("PullRequest ")
-                        .append(createHtmlHyperlink(url, title))
+                        .append(createMdHyperlink(url, title))
                         .append(" was closed")
                         .append("\n")
                         .append("Update time: ")
@@ -94,7 +95,7 @@ public enum GitHubEventType {
                 String title = dto.payload().pullRequest().title();
                 String url = dto.payload().pullRequest().url();
                 message.append("Started reviewing PullRequest ")
-                    .append(createHtmlHyperlink(url, title))
+                    .append(createMdHyperlink(url, title))
                     .append("\n")
                     .append("Update time: ")
                     .append(dto.updateTime());
@@ -104,10 +105,12 @@ public enum GitHubEventType {
             default -> message.append("performed an unknown action");
         }
 
+        message.append("\nInto repo ").append(createMdHyperlink(uri.toString(), dto.repo().name()));
+
         return message.toString();
     }
 
-    private static String createHtmlHyperlink(String url, String title) {
-        return "<a href=\"" + url + "\">" + title + "</a>";
+    private static String createMdHyperlink(String url, String title) {
+        return "[" + title + "](" + url + ")";
     }
 }

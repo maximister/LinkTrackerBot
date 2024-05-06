@@ -2,12 +2,18 @@ package edu.java.scrapper.clients.stackOverflow;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import edu.java.scrapper.configuration.RetryConfig;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderService;
 import edu.java.scrapper.httpClients.stackOverflow.StackOverflowWebClientService;
 import java.net.URI;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,12 +23,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.COLLECTION;
 
 public class StackOverflowWebClientServiceTest {
     private static final String CORRECT_SERVER_ENDPOINT = "/questions/53579112*";
     private static final String CORRECT_LINK =
         "https://stackoverflow.com/questions/53579112/inject-list-of-all-beans-with-a-certain-interface";
-    private static final String NOT_STACKOVERFLOW_LINK = "https://youtube.com";
     private static final String NOT_EXISTING_QUESTION =
         "https://stackoverflow.com/questions/10000000000000000/aboba";
 
@@ -53,25 +59,29 @@ public class StackOverflowWebClientServiceTest {
 
 
         server.start();
-        service = new StackOverflowWebClientService(server.baseUrl());
+        RetryConfig configuration = new RetryConfig(
+            List.of(new RetryConfig.RetryInfo("stackoverflow", "fixed", 1, 1,
+                Duration.ofSeconds(1), Set.of(500)
+            )));
+        service = new StackOverflowWebClientService(server.baseUrl(), configuration);
     }
 
     @SneakyThrows
     @Test
     @DisplayName("testing client work with correct link")
     public void fetch_shouldReturnCorrectDto() {
-        LinkInfo result = service.fetch(new URI(CORRECT_LINK));
+        List<LinkInfo> result = service.fetch(new URI(CORRECT_LINK));
 
-        assertThat(result).isEqualTo(CORRECT_DTO);
+        assertThat(result).isEqualTo(List.of(CORRECT_DTO));
     }
 
     @SneakyThrows
     @Test
     @DisplayName("testing client work with non existing question")
     public void fetch_shouldReturnNull_whenQuestionDoesNotExist() {
-        LinkInfo result = service.fetch(new URI(NOT_EXISTING_QUESTION));
+        List<LinkInfo> result = service.fetch(new URI(NOT_EXISTING_QUESTION));
 
-        assertThat(result).isNull();
+        assertThat(result).isEqualTo(Collections.emptyList());
     }
 
     @AfterAll

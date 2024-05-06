@@ -6,6 +6,58 @@ spring:
     name: bot
   jackson:
     time-zone: UTC
+  cache:
+    cache-names:
+      - rate-limit-buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+
+management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  server:
+    port: 8091
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, info, prometheus
+      path-mapping:
+        prometheus: /metrics
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+kafka:
+  consumer:
+    bootstrap-servers: localhost:9092
+    group-id: bot
+    auto-offset-reset: earliest
+    max-poll-interval-ms: 300_000
+    enable-auto-commit: false
+    concurrency: 1
+  producer:
+    bootstrap-servers: localhost:9092
+    client-id: bot
+    acks-mode: 0
+    delivery-timeout: 60s
+    linger-ms: 1_000
+    batch-size: 100_000
+
+kafka-topic:
+  name: scrapper-bot-mq
+  partitions: 2
+  replicas: 1
 
 server:
   port: 8090
@@ -18,3 +70,39 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
 
+retry-config:
+  retries:
+    - client: scrapper
+      type: exponential
+      max-attempts: 3
+      step: 2
+      delay: 2s
+      codes:
+        - 500
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-bucket
+      url: .*
+      http-status-code: too_many_requests
+      http-response-headers:
+        Content-Type: "application/json; charset=utf-8"
+      http-response-body: |
+        {
+          "description": "The number of requests from the current IP has been exceeded",
+          "code": 429,
+          "exceptionName": "Rate limit exceeded",
+          "exceptionMessage": "You <b>exceeded </b> the number of available requests, please try again later"
+        }
+      rate-limits:
+        - bandwidths:
+            - capacity: 1
+              time: 1
+              unit: hours
+              refill-speed: interval
+          cache-key: getRemoteAddr()
+          skip-condition: '@limitService.isSkipped(getRemoteAddr())'
+
+rate-limiter:
+  whitelist: 127.0.0.1

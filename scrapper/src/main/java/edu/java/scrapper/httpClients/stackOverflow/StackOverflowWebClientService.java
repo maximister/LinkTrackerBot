@@ -1,18 +1,21 @@
 package edu.java.scrapper.httpClients.stackOverflow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.java.scrapper.configuration.RetryConfig;
 import edu.java.scrapper.httpClients.LinkInfo;
 import edu.java.scrapper.httpClients.LinkProviderWebService;
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class StackOverflowWebClientService extends LinkProviderWebService {
     private static final Pattern STACKOVERFLOW_PATTERN =
         Pattern.compile("https://stackoverflow.com/questions/(\\d+).*");
@@ -22,16 +25,22 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
     @Value("${client.stackoverflow.key}")
     private String key;
 
-    public StackOverflowWebClientService(String baseUrl) {
-        super(baseUrl);
-    }
-
-    public StackOverflowWebClientService() {
-        super(BASE_URL);
+    public StackOverflowWebClientService(String baseUrl, RetryConfig retryConfig) {
+        super(baseUrl, retryConfig);
     }
 
     @Override
-    public LinkInfo fetch(URI url) {
+    protected String getName() {
+        return "stackoverflow";
+    }
+
+    @Autowired
+    public StackOverflowWebClientService(RetryConfig retryConfig) {
+        super(BASE_URL, retryConfig);
+    }
+
+    @Override
+    public List<LinkInfo> fetch(URI url) {
         Matcher matcher = STACKOVERFLOW_PATTERN.matcher(url.toString());
         matcher.matches();
         String id = matcher.group(1);
@@ -47,10 +56,10 @@ public class StackOverflowWebClientService extends LinkProviderWebService {
 
         if (info == null || info.equals(StackOverflowRequest.EMPTY_RESPONSE)) {
             log.warn("received empty result with link {}", url);
-            return null;
+            return Collections.emptyList();
         }
 
-        return info.toLinkInfo(url);
+        return List.of(info.toLinkInfo(url));
     }
 
     @Override

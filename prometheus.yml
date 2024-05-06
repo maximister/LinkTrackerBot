@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['host.docker.internal:9090']
+  - job_name: scrapper
+    static_configs:
+      - targets: ['host.docker.internal:8081']
+  - job_name: bot
+    static_configs:
+      - targets: ['host.docker.internal:8091']

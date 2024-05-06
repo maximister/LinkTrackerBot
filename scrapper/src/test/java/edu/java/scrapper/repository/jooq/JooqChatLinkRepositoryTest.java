@@ -30,15 +30,16 @@ public class JooqChatLinkRepositoryTest extends IntegrationEnvironment {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    @Qualifier("JooqLinkRepository")
+    @Qualifier("jooqLinkRepository")
     private LinkRepository linkRepository;
     @Autowired
-    @Qualifier("JooqChatRepository")
+    @Qualifier("jooqChatRepository")
     private ChatRepository chatRepository;
 
     @SneakyThrows
     @BeforeEach
     public void fillTable() {
+        jdbcTemplate.update("TRUNCATE TABLE chat_link, link, chat RESTART IDENTITY CASCADE");
         //fill chats
         chatRepository.addChat(1);
         chatRepository.addChat(2);

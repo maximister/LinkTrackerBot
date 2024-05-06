@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
+import java.util.Set;
+import edu.java.bot.configuration.RetryConfig;
 import edu.java.bot.model.scrapperClientDto.AddLinkRequest;
 import edu.java.bot.model.scrapperClientDto.LinkResponse;
 import edu.java.bot.model.scrapperClientDto.ListLinksResponse;
@@ -75,7 +78,11 @@ public class ScrapperClientTest {
                 ))));
 
         server.start();
-        client = new WebScrapperClient(server.baseUrl());
+        RetryConfig configuration = new RetryConfig(
+            List.of(new RetryConfig.RetryInfo("scrapper", "fixed", 1, 1,
+                Duration.ofSeconds(1), Set.of(500)
+            )));
+        client = new WebScrapperClient(server.baseUrl(), configuration);
     }
 
     @Test

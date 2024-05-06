@@ -3,10 +3,10 @@ package edu.java.scrapper.repository.jooqRepository;
 import edu.java.scrapper.repository.ChatLinkRepository;
 import java.util.List;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import static edu.java.scrapper.repository.jooq.tables.ChatLink.CHAT_LINK;
 
-@Repository("JooqChatLinkRepository")
+@Service
 public class JooqChatLinkRepository implements ChatLinkRepository {
     private final DSLContext context;
 

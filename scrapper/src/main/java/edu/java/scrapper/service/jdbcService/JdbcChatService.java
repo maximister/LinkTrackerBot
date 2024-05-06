@@ -4,19 +4,16 @@ import edu.java.scrapper.exceptions.ChatAlreadyRegisteredException;
 import edu.java.scrapper.repository.ChatRepository;
 import edu.java.scrapper.service.TgChatService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("JdbcChatService")
 @Slf4j
 public class JdbcChatService implements TgChatService {
     private final ChatRepository chatRepository;
 
-    public JdbcChatService(@Qualifier("JdbcChatRepository") ChatRepository repository) {
+    public JdbcChatService(ChatRepository repository) {
         this.chatRepository = repository;
     }
 
